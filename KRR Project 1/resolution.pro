@@ -2,34 +2,45 @@
 %new KB..., res(newKB)
 
 %1. RES(KB) :- member(X, KB), member(Y, KB)
-%2. check if X and Y are not equal
+%2. select 2 lists from the KB (the second one should contain a negated subclause from the first list),
+%(the two lists (clauses) need to be two different elements)
 %3. check whether they have the connective element that allows us to apply resolution
 %(like "not x or x")
-%4. add the new element to the KB
-%continue recursively
+%4. add the new element to the KB and delete the clauses that were used to obtain it
+%(if it's an empty list ommit it)
+%5. continue recursively
 
-% res(KB) :- member([], KB).
-% res(KB) :-
-%     member(X, KB),
-%     member(Y, KB),
+%returns false if satisfiable
+%returns true if unsatisfiable
 
-res(KB) :- member([], KB).
+% my example KB = [[not(a), b], [a], [c], [d], [e], [not(e), f], [not(b), not(d), not(f)]]
+
+%I. KB = [[not(a), b], [c,d], [not(d), b], [not(b)], [not(c), b], [e], [a, b, not(f), f]]
+%II. KB = [[not(b),a], [not(a),b,e], [a, not(e)], [not(a)], [e]]
+%III. KB = [[not(a),b], [c,f], [not(c)], [not(f),b], [not(c),b]]
+%IV. KB = [[a,b], [not(a), not(b)], [c]]
+
+res(KB) :- member([], KB), !.
 res(KB) :- 
-    sort(KB, KB_Sorted), 
+    sort(KB, KB_Sorted),                               %remove repeating clauses
     member(Clause1, KB_Sorted),
-    member(Clause2, KB_Sorted),
-    select(Subclause, Clause1, Prop1),
+    delete(KB_Sorted, Clause1, KB_Without_Clause1),    %delete the first member into a temp KB
+    member(Clause2, KB_Without_Clause1),               %different from the first member
+    select(Subclause, Clause1, Prop1),                 
     (
         memberchk(not(Subclause), Clause2), true ->
-            select(not(Subclause), Clause2, Prop2)
+            select(not(Subclause), Clause2, Prop2)     %if the connective element exists, select it
         ;
-            false
+            false                                      %otherwise return false (satisfiable)
     ),
-    append(Prop1, Prop2, Resolvent0),
+    append(Prop1, Prop2, Resolvent0),                  %Resolvent element
     sort(Resolvent0, Resolvent),
-    delete(KB_Sorted, Clause1, KB_New1),
-    delete(KB_New1, Clause2, KB_New2),
-    append(KB_New2, [Resolvent], KB_New3),
-    res(KB_New3).
-
-
+    delete(KB_Sorted, Clause1, KB_New1),               
+    delete(KB_New1, Clause2, KB_New2),                 %delete the elements used to obtain the resolvent from the KB
+    (
+        not(member(_, Resolvent)), true ->             %if the resolvent is empty, continue return true (unsatisfiable)
+            true, !
+        ;
+            append(KB_New2, [Resolvent], KB_New3),     %otherwise append the resolvent to the KB and continue
+            res(KB_New3), !
+    ).
