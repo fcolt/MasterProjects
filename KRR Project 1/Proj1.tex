@@ -167,21 +167,33 @@ $\left\{
 \begin{center}
 \begin{tikzpicture}[
   grow'=up,
-  level 1/.style={sibling distance=25em},
-  level 2/.style={sibling distance=13em}]
+  level 1/.style={sibling distance=20em},
+  level 2/.style={sibling distance=10em}]
 \node (f) {[ ]} 
-child { node (1l) {$[\neg P_2(V),\neg P_6(V)]$}
-  child {node (2ll) {\color{red}$(7)[\neg P_2(V),\neg P_4(V),\neg P_6(V)]$}}
-  child {node (2lr) {$(4)[P_4(x)]$}}
+child {
+	node (-1) {$[\neg P_2(V)]$}
+	child {node (0r) {(5)$[P_5(V)]$}}
+child {
+	node (0) {$[\neg P_2(V), \neg P_5(V)]$}
+child { 
+	node (1l) {$[\neg P_2(V),\neg P_6(V)]$}
+		child {node (2ll) {\color{red}$(7)[\neg P_2(V),\neg P_4(V),\neg P_6(V)]$}}
+		child {node (2lr) {$(4)[P_4(x)]$}}
 }
-child {node (1r) {$[P_2(V), P_6(V)]$}
-child {node (2rl) {(1$\lor$6)$[\neg P_1(x),P_2(x),\neg P_5(x), P_6(x)]$}}
-child {node (2rr) {(2$\lor$5)$[P_1(V),P_5(V)]$}}
+child {
+	node (1m) {(6)$[\neg P_5(x), P_6(x)]$}
+}
+}}
+child {
+	node (1r) {$[P_2(V)]$}
+		child {node (2rl) {(1)$[\neg P_1(x),P_2(x)]$}}
+		child {node (2rr) {(2)$[P_1(V)]$}}
 };
 
    \begin{scope}[nodes = {draw = none}]
       \path (1l) -- (2lr) node [near start, right]  {$x/V$};
-      \path (1r) -- (2rl) node [near start, left] {$x/V$};
+      \path (1r) -- (2rl) node [near start, left]  {$x/V$};
+      \path (-1) -- (1m) node [near end, right]  {$x/V$};
    \end{scope}
 \end{tikzpicture}
 \end{center}
