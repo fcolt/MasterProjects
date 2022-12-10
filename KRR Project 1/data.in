@@ -1,0 +1,5 @@
+[[not(a), b], [a], [c], [d], [e], [not(e), f], [not(b), not(d), not(f)]].
+[[not(a), b], [c,d], [not(d), b], [not(b)], [not(c), b], [e], [a, b, not(f), f]].
+[[not(b),a], [not(a),b,e], [a, not(e)], [not(a)], [e]].
+[[not(a),b], [c,f], [not(c)], [not(f),b], [not(c),b]].
+[[a,b], [not(a), not(b)], [c]].

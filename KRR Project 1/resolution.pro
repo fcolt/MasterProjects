@@ -44,3 +44,22 @@ res(KB) :-
             append(KB_New2, [Resolvent], KB_New3),     %otherwise append the resolvent to the KB and continue
             res(KB_New3), !
     ).
+
+read_clauses_from_file(Str, []) :-
+    at_end_of_stream(Str), !.
+
+read_clauses_from_file(Str, [_|T]) :-
+    not(at_end_of_stream(Str)),
+    read(Str, X),
+    res(X) -> 
+        write(unsat), nl,
+        read_clauses_from_file(Str, T)
+    ;
+        write(sat), nl,
+    read_clauses_from_file(Str, T).
+
+
+main :-
+    open('/Users/chocogo/Desktop/Master/Projects/KRR Project 1/data.in', read, Str),
+    read_clauses_from_file(Str, _),
+    close(Str).
