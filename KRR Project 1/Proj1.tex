@@ -305,12 +305,44 @@ Another challenge in implementing the algorithm is finding optimal strategies of
 Taking all of these facts into account, the outline of the implementation of the algorithm was the following:
 \begin{enumerate}
 	\item A custom predicate called kb\_dot\_p/3 was implemented, which performs the dot operation. It is based on the two steps from above and uses two custom predicates called negate/2 and delete\_parameter/3 to perform the second step. The first step is achieved through the built-in findall/3\cite{findallpred} predicate which filters KB to exclude all clauses that include p. For the second step, the predicate delete\_parameter/3 uses maplist/3\cite{maplistpred} to filter the whole KB using the custom delete\_occurences\_of\_p/3 predicate (which filters only one clause from KB to remove ocurences of p).
-	\item For the selection of p, two predicates were created corresponding to the two different strategies used. The first one is called select\_shortest\_p/2 (finds the list of minimum length, selects a member from that list and assigns it to P). The second one is select\_most\_balanced\_p 
-	\item There are two versions of the Davis-Putnam procedures implemented as two different predicates. The first one is dp\_shortest\_clauses\_p/2 and uses the select\_shortest\_p/2 predicate. Its implementation is very close to the pseudocode, the only addition being the recursive addition of the truth values for the literals in a list. The second predicate is called dp\_most\_balanced\_p/2 and apart from using the other selection predicate is exactly the same.
+	\item For the selection of p, two predicates were created corresponding to the two different strategies used. The first one is called select\_shortest\_p/2 (finds the list of minimum length, selects a member from that list and assigns it to P). The second one is select\_largest\_p/2, which does the opposite of the first selector. 
+	\item There are two versions of the Davis-Putnam procedures implemented as two different predicates. The first one is dp\_shortest\_clauses\_p/2 and uses the select\_shortest\_p/2 predicate. Its implementation is very close to the pseudocode, the only addition being that of the truth values for the literals in a list. The second predicate is called dp\_largest\_clauses\_p/2 and apart from using the other selection predicate is exactly the same.
 	\item Similar to the Resolution algorithm implementation, the prolog script in which the Davis-Putnam procedure was implemented also reads input from a file, but two different predicates had to be implemented evaluate the two custom predicates on the clause sets 
 	
 	(read\_clauses\_from\_file1/2 and read\_clauses\_from\_file2/2).
 \end{enumerate}
+
+The following input was used with the script:
+\begin{enumerate}
+	\item $[[toddler],[not(toddler),child],[not(child),not(male),boy],[not(infant),child],$ \hfill \\ $[not(child),not(female),girl], [female], [girl]]$
+	\item $[[toddler],[not(toddler),child],[not(child),not(male),boy],[not(infant),child],$ \hfill \\$ [not(child),not(female),girl], [female], [not(girl)]]$
+	\item $[[not(a),b],[c,d],[not(d),b],[not(c),b],[not(b)],[e],[a,b,not(f),f]]$
+	\item $[[not(b),a],[not(a),b,e],[e],[a, not(e)],[not(a)]]$
+	\item $[[not(a),not(e),b],[not(d),e,not(b)],[not(e),f,not(b)],[f,not(a),e],[e,f,not(b)]]$
+	\item $[[a,b],[not(a),not(b)] ,[not(a),b] ,[a,not(b)]]$
+\end{enumerate}
+
+After running the D-P predicates on the input, the following output resulted:
+
+\begin{verbatim}
+--------Strategy 1: P appears in the shortest clauses--------------
+[toddler/true,child/true,female/true,girl/true,not(male)/true]
+NO
+NO
+NO
+[not(a)/true,not(d)/true,not(e)/true,f/true]
+NO
+------------Strategy 2: P is in the largest clauses-----------------
+[not(male)/true,girl/true,child/true,toddler/true,female/true]
+NO
+NO
+NO
+[not(a)/true,not(d)/true,not(e)/true,f/true]
+NO
+-------------------------------------------------------------------
+\end{verbatim}
+
+After also running the Resolution script on the same input, it also assigned the same sat/unsat values to each set of clauses, confirming the correctness of the results.
 
 \newpage
 \bibliographystyle{IEEEtran}
@@ -326,6 +358,177 @@ Taking all of these facts into account, the outline of the implementation of the
 \end{thebibliography}
 
 \newpage
-\lstinputlisting[language=Prolog, caption={Resolution Implementation in Prolog}]{resolution.pro}
+
+% --- ugly internals for language definition ---
+%
+\makeatletter
+
+% initialisation of user macros
+\newcommand\PrologPredicateStyle{}
+\newcommand\PrologVarStyle{}
+\newcommand\PrologAnonymVarStyle{}
+\newcommand\PrologAtomStyle{}
+\newcommand\PrologOtherStyle{}
+\newcommand\PrologCommentStyle{}
+
+% useful switches (to keep track of context)
+\newif\ifpredicate@prolog@
+\newif\ifwithinparens@prolog@
+
+% save definition of underscore for test
+\lst@SaveOutputDef{`_}\underscore@prolog
+
+% local variables
+\newcount\currentchar@prolog
+
+\newcommand\@testChar@prolog%
+{%
+  % if we're in processing mode...
+  \ifnum\lst@mode=\lst@Pmode%
+    \detectTypeAndHighlight@prolog%
+  \else
+    % ... or within parentheses
+    \ifwithinparens@prolog@%
+      \detectTypeAndHighlight@prolog%
+    \fi
+  \fi
+  % Some housekeeping...
+  \global\predicate@prolog@false%
+}
+
+% helper macros
+\newcommand\detectTypeAndHighlight@prolog
+{%
+  % First, assume that we have an atom.
+  \def\lst@thestyle{\PrologAtomStyle}%
+  % Test whether we have a predicate and modify the style accordingly.
+  \ifpredicate@prolog@%
+    \def\lst@thestyle{\PrologPredicateStyle}%
+  \else
+    % Test whether we have a predicate and modify the style accordingly.
+    \expandafter\splitfirstchar@prolog\expandafter{\the\lst@token}%
+    % Check whether the identifier starts by an underscore.
+    \expandafter\ifx\@testChar@prolog\underscore@prolog%
+      % Check whether the identifier is '_' (anonymous variable)
+      \ifnum\lst@length=1%
+        \let\lst@thestyle\PrologAnonymVarStyle%
+      \else
+        \let\lst@thestyle\PrologVarStyle%
+      \fi
+    \else
+      % Check whether the identifier starts by a capital letter.
+      \currentchar@prolog=65
+      \loop
+        \expandafter\ifnum\expandafter`\@testChar@prolog=\currentchar@prolog%
+          \let\lst@thestyle\PrologVarStyle%
+          \let\iterate\relax
+        \fi
+        \advance \currentchar@prolog by 1
+        \unless\ifnum\currentchar@prolog>90
+      \repeat
+    \fi
+  \fi
+}
+\newcommand\splitfirstchar@prolog{}
+\def\splitfirstchar@prolog#1{\@splitfirstchar@prolog#1\relax}
+\newcommand\@splitfirstchar@prolog{}
+\def\@splitfirstchar@prolog#1#2\relax{\def\@testChar@prolog{#1}}
+
+% helper macro for () delimiters
+\def\beginlstdelim#1#2%
+{%
+  \def\endlstdelim{\PrologOtherStyle #2\egroup}%
+  {\PrologOtherStyle #1}%
+  \global\predicate@prolog@false%
+  \withinparens@prolog@true%
+  \bgroup\aftergroup\endlstdelim%
+}
+
+% language name
+\newcommand\lang@prolog{Prolog-pretty}
+% ``normalised'' language name
+\expandafter\lst@NormedDef\expandafter\normlang@prolog%
+  \expandafter{\lang@prolog}
+
+% language definition
+\expandafter\expandafter\expandafter\lstdefinelanguage\expandafter%
+{\lang@prolog}
+{%
+  language            = Prolog,
+  keywords            = {},      % reset all preset keywords
+  showstringspaces    = false,
+  alsoletter          = (,
+  alsoother           = @$,
+  moredelim           = **[is][\beginlstdelim{(}{)}]{(}{)},
+  MoreSelectCharTable =
+    \lst@DefSaveDef{`(}\opparen@prolog{\global\predicate@prolog@true\opparen@prolog},
+}
+
+% Hooking into listings to test each ``identifier''
+\newcommand\@ddedToOutput@prolog\relax
+\lst@AddToHook{Output}{\@ddedToOutput@prolog}
+
+\lst@AddToHook{PreInit}
+{%
+  \ifx\lst@language\normlang@prolog%
+    \let\@ddedToOutput@prolog\@testChar@prolog%
+  \fi
+}
+
+\lst@AddToHook{DeInit}{\renewcommand\@ddedToOutput@prolog{}}
+
+\makeatother
+%
+% --- end of ugly internals ---
+
+
+% --- definition of a custom style similar to that of Pygments ---
+% custom colors
+\definecolor{PrologPredicate}{RGB}{000,031,255}
+\definecolor{PrologVar}      {RGB}{024,021,125}
+\definecolor{PrologAnonymVar}{RGB}{000,127,000}
+\definecolor{PrologAtom}     {RGB}{186,032,032}
+\definecolor{PrologComment}  {RGB}{063,128,127}
+\definecolor{PrologOther}    {RGB}{000,000,000}
+
+% redefinition of user macros for Prolog style
+\renewcommand\PrologPredicateStyle{\color{PrologPredicate}}
+\renewcommand\PrologVarStyle{\color{PrologVar}}
+\renewcommand\PrologAnonymVarStyle{\color{PrologAnonymVar}}
+\renewcommand\PrologAtomStyle{\color{PrologAtom}}
+\renewcommand\PrologCommentStyle{\itshape\color{PrologComment}}
+\renewcommand\PrologOtherStyle{\color{PrologOther}}
+
+% custom style definition 
+\lstdefinestyle{Prolog-pygsty}
+{
+  language     = Prolog-pretty,
+  upquote      = true,
+  stringstyle  = \PrologAtomStyle,
+  commentstyle = \PrologCommentStyle,
+  literate     =
+    {:-}{{\PrologOtherStyle :-}}2
+    {,}{{\PrologOtherStyle ,}}1
+    {.}{{\PrologOtherStyle .}}1
+}
+
+% global settings
+\lstset
+{
+  captionpos = below,
+  frame      = single,
+  columns    = fullflexible,
+  basicstyle = \ttfamily,
+}
+
+
+
+
+
+
+
+\lstinputlisting[style=Prolog-pygsty, caption={Resolution Implementation in Prolog}]{resolution.pro}
+\newpage
+\lstinputlisting[style=Prolog-pygsty, caption={Davis-Putnam Procedure Implementation in Prolog}]{davis_putnam.pro}
 
 \end{document}
