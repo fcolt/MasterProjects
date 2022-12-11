@@ -13,14 +13,17 @@
 
 %KB=[[p,q],[not(p),a,b],[not(p),c],[d,e]]
 %KB=[[p,q,not(p)], [not(p))]
+negate(not(A),A).
+negate(A,not(A)).
+
 kb_dot_p(KB, P, Result) :- 
     findall(X, (member(X, KB), not(member(P, X))), NewKB), %remove all clauses from KB that contain P
-    delete_parameter(NewKB, not(P), Result0),
-    exclude(empty, Result0, Result).
+    negate(P, NonP),                                       %to avoid non(non(p)) not reducing to p
+    delete_parameter(NewKB, NonP, Result), !.
 
 empty([]).
 
-delete_parameter(KB, P, Result):-
+delete_parameter(KB, P, Result) :-
     maplist(delete_occurences_of_p(P), KB, Result). %filter the whole KB using the delete_occurences_of_p predicate
 
 delete_occurences_of_p(P, List, Result):-
@@ -28,13 +31,44 @@ delete_occurences_of_p(P, List, Result):-
 
 non_equal_to_p(P,X) :- P \== X.
 
+select_shortest_p(KB, P) :-
+    findall(Length, (member(List, KB), length(List, Length)), Lengths),
+    min_list(Lengths, MinLength),
+    member(List, KB),
+    length(List, MinLength),
+    member(P, List).
 
-davis_putnam_1([], []).
-davis_putnam_1(KB, _) :- member([], KB), !, fail.
-davis_putnam_1(KB, [(C/A)|S]):- 
-    choose_p(),
-    kb_dot_p(KB, P, Result),
-    empty(Result) -> 
-        true,
-    
+dp_shortest_clauses_p([], []).
+dp_shortest_clauses_p(KB, _) :- member([], KB), write('NO'), !, fail.
+dp_shortest_clauses_p(KB, [(C/A)|S]):- 
+    select_shortest_p(KB, P),
+    negate(P, NonP),
+    kb_dot_p(KB, P, KB_dot_P),
+    dp_shortest_clauses_p(KB_dot_P, _) -> 
+        write(P), write('/'), write('true'), nl, !
+    ;
+        kb_dot_p(KB, NonP, KB_dot_nP),
+        dp_shortest_clauses_p(KB_dot_nP, _).
+  
 
+% KB=[[p,q], [not(p), a, b], [not(p), c], [d,e]],
+
+
+% read_clauses_from_file(Str, []) :-
+%     at_end_of_stream(Str), !.
+
+% read_clauses_from_file(Str, [_|T]) :-
+%     not(at_end_of_stream(Str)),
+%     read(Str, X),
+%     dp_shortest_clauses_p(X, Test) -> 
+%         write(unsat), nl,
+%         read_clauses_from_file(Str, T)
+%     ;
+%         write(sat), nl,
+%     read_clauses_from_file(Str, T).
+
+
+% main :-
+%     open('/Users/chocogo/Desktop/Master/Projects/KRR Project 1/data_dp.in', read, Str),
+%     read_clauses_from_file(Str, _),
+%     close(Str).
