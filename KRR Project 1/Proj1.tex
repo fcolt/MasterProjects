@@ -6,6 +6,7 @@
 \usepackage{helvet}
 \usepackage{etoolbox}
 \usepackage{graphicx}
+\usepackage{listings}
 \usepackage{titlesec}
 \usepackage{caption}
 \usepackage{booktabs}
@@ -14,6 +15,8 @@
 \usepackage{caption}
 \usepackage{tikz-qtree}
 \usepackage{latexsym}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \captionsetup[figure]{name=Figure}
 \graphicspath{ {./images/} }
 \usepackage{scrextend}
@@ -199,4 +202,130 @@ child {
 \end{center}
 
 Thus, we have proven that the negated form of sentence 5 is unsatisfiable given our KB. In conclusion, the sentence: "Some gamers who purchase Divine Rapier get angry" is logically entailed from our KB. 
+
+\subsection{Implementing the Resolution Algorithm in Prolog (c)}
+	The Resolution algorithm can be expressed in the following way, using pseudocode \cite{Resolution}:
+	
+\algrenewcommand\algorithmicrequire{\textbf{Input:}}
+\algrenewcommand\algorithmicensure{\textbf{Output:}}
+\begin{algorithm}
+\begin{algorithmic}
+\caption{Res(S)}\label{alg:cap}
+\Require $S$, a finite set of propositional clauses (of form [[w, s, n(p)], [a, n(w), r, t],[[q]])
+\Ensure $S$ is satisfiable or unsatisfiable
+\If{$[]\in S$}
+	\State \Return unsat
+\ElsIf {There are two clauses in $S$ such that they resolve to produce another clause not already in S}
+	\State Add the new resolvent clause to S and remove the clauses used to obtain it
+	\State Res(S)
+	\Else \State \Return sat
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+To implement this algorithm in Prolog, based on the pseudocode presented above, I followed this way of thinking:
+\begin{itemize}
+	\item The implemented algorithm returns false if the given set of clauses (KB) is satisfiable and true if it is unsatisfiable,
+	\item For the resolution procedure I implemented a predicated called res/1 which takes KB as a parameter. The stop condition for the predicate is finding an empty list as a member.
+	\item If there's no empty list in the KB, it does the following:
+		\begin{enumerate}
+			\item The KB is sorted using the built-in predicate sort/2\cite{sortpred} to remove tautologies,
+			\item It takes a member clause from KB (Clause1) using the built-in predicate member/2\cite{memberpred},
+			\item It takes a different member clause (Clause2) from KB,
+			\item It selects a Subclause from Clause1, using the built-in predicate select/3\cite{selectpred},
+			\item It checks if the negated Subclause is a member of Clause2; if it is, it selects the clauses from which the two subclauses originate and appends them to a Resolvent (using a built-in predicate called append/3\cite{appendpred}),
+			\item The Resolvent is sorted (for the same effect as in step 1),
+			\item The two clauses that generated the Resolvent are delete from the KB using a built in predicate delete/3\cite{deletepred},
+			\item If the Resolvent is empty, return true (unsatisfiable),
+			\item Otherwise, append the Resolvent to the new KB and continue recursively with the new KB.
+		\end{enumerate}
+\end{itemize}
+
+For the sake of reading input from files, I also implemented a predicate called read\_clauses\_from\_file/2, which applies the res predicate to each line of input and outputs whether the clause set is satisfiable or unsatisfiable in the terminal.
+
+To run the Prolog script on the set of clauses presented in the first page, it needs to be rewritten in the following way:
+$$
+KB=[[not(a), b], [a], [c], [d], [e], [not(e), f], [not(b), not(d), not(f)]].
+$$
+The letters a through f are direct mappings of the clauses $P_1$ through $P_6$ from page 2. Querying 
+$$
+KB=[[not(a), b], [a], [c], [d], [e], [not(e), f], [not(b), not(d), not(f)]], res(KB).
+$$
+yields the output "unsat", as expected.
+
+\subsection{Running the Resolution Algorithm on Other Sets of Propositional Clauses (d)}
+Implementing the read\_clauses\_from\_file/2 predicate and placing it inside of a main/0 predicate, along with creating a data.in file allows the Prolog script to swiftly compute the output for each of the following sets of clauses:
+\begin{enumerate}
+	\item $[[not(a), b], [c,d], [not(d), b], [not(b)], [not(c), b], [e], [a, b, not(f), f]]$ : \colorbox{red}{unsat}
+	\item $[[not(b),a], [not(a),b,e], [a, not(e)], [not(a)], [e]]$ : \colorbox{red}{unsat}
+	\item $[[not(a),b], [c,f], [not(c)], [not(f),b], [not(c),b]]$ : \colorbox{green} {sat}
+	\item $[[a,b], [not(a), not(b)], [c]]$ : \colorbox{green}{sat}.
+\end{enumerate} 
+
+\section{Implementing the Davis-Putnam Procedure in Prolog}
+Like the Resolution algorithm, the Davis-Putnam procedure also checks whether a finite set of clauses is satisfiable, but is generally faster. It also returns a list of truth values assigned to clauses from the Knowledge Base when it is satisfiable.
+
+The algorithm, presented in pseudocode, is the following\cite{Resolution}: 
+\begin{algorithm}
+\begin{algorithmic}
+\caption{DP(KB)}\label{alg:cap}
+\Require $KB$, a finite set of propositional clauses (of form [[w, s, n(p)], [a, n(w), r, t],[[q]])
+\Ensure are the clauses from $KB$ satisfiable or unsatisfiable, YES or NO?
+\If{KB is empty}
+	\State \Return YES
+\EndIf
+\If {KB contains []} \State \Return NO
+\EndIf
+\State p $\gets$ some atom from KB
+\If {DP(KB $\cdot$ p)=YES}
+\State \Return YES
+\Else 
+\State \Return DP(C $\cdot$ $\neg p$)
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+The mathematical definition for the dot operation can be expressed as such:
+$$
+C \cdot m=\{c | c \in C, m \not\in c\} \cup \{(c- \neg m) | c \in C, m \not\in c, \neg m \in c\}.
+$$
+
+The operation can be computed using the following algorithm: For each L from C:
+\begin{enumerate}
+	\item if L contains m, remove L from C,
+	\item if L contains $\neg m$, remove $\neg m$ from L.
+\end{enumerate}
+
+Another challenge in implementing the algorithm is finding optimal strategies of choosing p. Two of those that were used were
+\begin{itemize}
+	\item p appears in the shortest clause(s) in KB,
+	\item p is the most balanced atom.
+\end{itemize}
+
+Taking all of these facts into account, the outline of the implementation of the algorithm was the following:
+\begin{enumerate}
+	\item A custom predicate called kb\_dot\_p/3 was implemented, which performs the dot operation. It is based on the two steps from above and uses two custom predicates called negate/2 and delete\_parameter/3 to perform the second step. The first step is achieved through the built-in findall/3\cite{findallpred} predicate which filters KB to exclude all clauses that include p. For the second step, the predicate delete\_parameter/3 uses maplist/3\cite{maplistpred} to filter the whole KB using the custom delete\_occurences\_of\_p/3 predicate (which filters only one clause from KB to remove ocurences of p).
+	\item For the selection of p, two predicates were created corresponding to the two different strategies used. The first one is called select\_shortest\_p/2 (finds the list of minimum length, selects a member from that list and assigns it to P). The second one is select\_most\_balanced\_p 
+	\item There are two versions of the Davis-Putnam procedures implemented as two different predicates. The first one is dp\_shortest\_clauses\_p/2 and uses the select\_shortest\_p/2 predicate. Its implementation is very close to the pseudocode, the only addition being the recursive addition of the truth values for the literals in a list. The second predicate is called dp\_most\_balanced\_p/2 and apart from using the other selection predicate is exactly the same.
+	\item Similar to the Resolution algorithm implementation, the prolog script in which the Davis-Putnam procedure was implemented also reads input from a file, but two different predicates had to be implemented evaluate the two custom predicates on the clause sets 
+	
+	(read\_clauses\_from\_file1/2 and read\_clauses\_from\_file2/2).
+\end{enumerate}
+
+\newpage
+\bibliographystyle{IEEEtran}
+\begin{thebibliography}{1.7} 
+	\bibitem[1]{Resolution} \color{cyan}Ronald Brachman, Hector Levesque, “Knowledge Representation and Reasoning,” \textit{Morgan Kaufmann}, p. 54-78, 2004
+	\bibitem[2]{sortpred} \url{https://www.swi-prolog.org/pldoc/man?predicate=sort/2}
+	\bibitem[3]{memberpred} \url{https://www.swi-prolog.org/pldoc/doc_for?object=member/2}
+	\bibitem[4]{selectpred} \url{https://www.swi-prolog.org/pldoc/doc_for?object=select/3}
+	\bibitem[5]{appendpred} \url{https://www.swi-prolog.org/pldoc/doc_for?object=append/3}
+	\bibitem[6]{deletepred} \url{https://www.swi-prolog.org/pldoc/doc_for?object=delete/3}
+	\bibitem[7]{findallpred} \url{https://www.swi-prolog.org/pldoc/man?predicate=findall/3}
+	\bibitem[8]{maplistpred} \url{https://www.swi-prolog.org/pldoc/doc_for?object=maplist/3}
+\end{thebibliography}
+
+\newpage
+\lstinputlisting[language=Prolog, caption={Resolution Implementation in Prolog}]{resolution.pro}
+
 \end{document}

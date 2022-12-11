@@ -38,7 +38,7 @@ res(KB) :-
     delete(KB_Sorted, Clause1, KB_New1),               
     delete(KB_New1, Clause2, KB_New2),                 %delete the elements used to obtain the resolvent from the KB
     (
-        not(member(_, Resolvent)), true ->             %if the resolvent is empty, continue return true (unsatisfiable)
+        not(member(_, Resolvent)), true ->             %if the resolvent is empty, return true (unsatisfiable)
             true, !
         ;
             append(KB_New2, [Resolvent], KB_New3),     %otherwise append the resolvent to the KB and continue
