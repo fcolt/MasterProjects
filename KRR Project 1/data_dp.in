@@ -1,0 +1,6 @@
+[[toddler],[not(toddler),child],[not(child),not(male),boy],[not(infant),child], [not(child),not(female),girl], [female], [girl]].
+[[toddler],[not(toddler),child],[not(child),not(male),boy],[not(infant),child], [not(child),not(female),girl], [female], [not(girl)]].
+[[not(a),b],[c,d],[not(d),b],[not(c),b],[not(b)],[e],[a,b,not(f),f]].
+[[not(b),a],[not(a),b,e],[e],[a, not(e)],[not(a)]].
+[[not(a),not(e),b],[not(d),e,not(b)],[not(e),f,not(b)],[f,not(a),e],[e,f,not(b)]].
+[[a,b],[not(a),not(b)] ,[not(a),b] ,[a,not(b)]].
