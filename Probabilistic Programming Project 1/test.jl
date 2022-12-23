@@ -2,6 +2,8 @@ using CSV
 using DataFrames
 using Distributions
 using Gen
+using PyPlot
+pygui(true)
 
 ratings_df = DataFrame(CSV.File("ratings.csv"))
 movies_df = DataFrame(CSV.File("movies.csv"))
@@ -27,12 +29,13 @@ mapcols!(col -> 2 * col, data) # to transform scores from floats to ints (0 - 5 
 data = convert.(Int64, data) #convert column types from Vector{Union{Missing, Float64}} to Vector{Float64}
 
 test_data = Matrix{Int64}(data[[19, 21, 475, 476, 477], [1, 2, 3, 4, 10]])
+
 K = 5
 no_users = size(test_data, 2)
 no_items = size(test_data, 1)
 
 @gen function hpf_model(
-    K::Int64, 
+    K, 
     a_prime::Float64 = 0.3, b_prime::Float64 = 0.3, 
     c_prime::Float64 = 0.3, d_prime::Float64 = 0.3, 
     a::Float64 = 0.3, c::Float64 = 0.3
@@ -55,11 +58,6 @@ no_items = size(test_data, 1)
     for i = 1:no_items
         push!(beta, [{(:beta, i, k)} ~ gamma(c, eta[i]) for k = 1:K])
     end
-    # xi = rand(Gamma(a_prime, a_prime/b_prime), no_users)
-    # theta = [rand(Gamma(a, xi[u]), K) for u in range(1, no_users)]
-
-    # eta = rand(Gamma(c_prime, c_prime/d_prime), no_items)
-    # beta = [rand(Gamma(c, eta[i]), K) for i in range(1, no_items)]
 
     y = Vector{Int64}[]
     for u = 1:no_users
@@ -80,8 +78,13 @@ function make_constraints(ratings::Matrix{Int64})
 end
 
 function block_resimulation_update(tr)
+    latent_variable = Gen.select(:xi)
+    (tr, _) = mh(tr, latent_variable)
 
     latent_variable = Gen.select(:theta)
+    (tr, _) = mh(tr, latent_variable)
+
+    latent_variable = Gen.select(:eta)
     (tr, _) = mh(tr, latent_variable)
 
     latent_variable = Gen.select(:beta)
@@ -113,4 +116,26 @@ function block_resimulation_inference(K::Int64, ratings::Matrix{Int64}, n_burnin
 
 end
 
-trs = block_resimulation_inference(5, test_data, 0, 10000)
+n_iter = 50000
+n_burnin = 120000
+
+trs = block_resimulation_inference(K, test_data, n_burnin, n_iter)
+
+theta_samples = [[[trs[iter][(:theta, u, k)] for k=1:K] for u = 1:no_users] for iter=1:n_iter]
+beta_samples = [[[trs[iter][(:beta, i, k)] for k=1:K] for i = 1:no_items] for iter=1:n_iter]
+
+function get_recommendations(theta_samples, beta_samples)
+    theta_mean = zeros((no_users, K))
+    beta_mean = zeros((no_items, K))
+    
+    for i = 1:n_iter
+        theta_mean += hcat(theta_samples[i]...)
+        beta_mean += hcat(beta_samples[i]...)
+    end
+    theta_mean = theta_mean / n_iter
+    beta_mean = beta_mean / n_iter
+    return transpose(theta_mean) * beta_mean
+end
+
+get_recommendations(theta_samples, beta_samples)
+
