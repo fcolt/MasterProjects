@@ -2,8 +2,6 @@ using CSV
 using DataFrames
 using Distributions
 using Gen
-using PyPlot
-pygui(true)
 
 ratings_df = DataFrame(CSV.File("ratings.csv"))
 movies_df = DataFrame(CSV.File("movies.csv"))
@@ -31,8 +29,8 @@ data = convert.(Int64, data) #convert column types from Vector{Union{Missing, Fl
 test_data = Matrix{Int64}(data[[19, 21, 475, 476, 477], [1, 2, 3, 4, 10]])
 
 K = 5
-no_users = size(test_data, 2)
-no_items = size(test_data, 1)
+no_users = size(test_data, 1)
+no_items = size(test_data, 2)
 
 @gen function hpf_model(
     K, 
@@ -69,8 +67,8 @@ end
 
 function make_constraints(ratings::Matrix{Int64})
     constraints = Gen.choicemap()
-    for u = 1:size(ratings, 2)
-        for i = 1:size(ratings, 1)
+    for u = 1:size(ratings, 1)
+        for i = 1:size(ratings, 2)
             constraints[(:y, u, i)] = ratings[u,i]
         end
     end
@@ -95,17 +93,13 @@ function block_resimulation_update(tr)
 end
 
 function block_resimulation_inference(K::Int64, ratings::Matrix{Int64}, n_burnin::Int64, n_samples::Int64)
-    # fix observed data
     observations = make_constraints(ratings)
-    # generate feasible starting point
     (tr, _) = generate(hpf_model, (K,), observations)
-
-    # throw to garbage (can be entirely irrelevant if the starting point is far away from the posterior)
+    
     for iter = 1:n_burnin
         tr = block_resimulation_update(tr)
     end
 
-    # start saving traces from here (for posterior restoration)
     trs = []
     for iter = 1:n_samples
         tr = block_resimulation_update(tr)
@@ -116,8 +110,8 @@ function block_resimulation_inference(K::Int64, ratings::Matrix{Int64}, n_burnin
 
 end
 
-n_iter = 50000
-n_burnin = 120000
+n_iter = 90000
+n_burnin = 50000
 
 trs = block_resimulation_inference(K, test_data, n_burnin, n_iter)
 
