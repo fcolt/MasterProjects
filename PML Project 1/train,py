@@ -1,0 +1,29 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import metrics
+
+features_df = pd.read_csv('features.csv')
+# mag_person1 = features_df.loc[features_df['label'] == 4]['magnitude']
+# mag_person2 = features_df.loc[features_df['label'] == 6]['magnitude']
+
+# plt.plot(range(450), mag_person1, color = 'r', label = 'person 3')
+# plt.plot(range(450), mag_person2, color = 'b', label = 'person 2')
+# plt.xlabel('samples')
+# plt.ylabel('magnitude')
+# plt.legend()
+# plt.show()
+
+labels = features_df['label']
+data = features_df.drop(columns = ['label'])
+data_train, data_test, labels_train, labels_test = train_test_split(
+    data, labels, test_size = 0.30
+)
+
+rfc = RandomForestClassifier(n_estimators = 32)
+rfc.fit(data_train, labels_train)
+
+labels_pred = rfc.predict(data_test)
+print("Accuracy:", metrics.accuracy_score(labels_test, labels_pred))
