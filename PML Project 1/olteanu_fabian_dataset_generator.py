@@ -4,7 +4,7 @@ import numpy as np
 from scipy.signal import find_peaks
 
 #data preprocessing
-directory = 'train'
+directory = 'test'
 
 rows = []
 features_df = pd.DataFrame()
@@ -46,6 +46,8 @@ for filename in os.listdir(directory):
         'axisz_fft_median': axisz_fft_describe['50%'],
         'crosscor_xz': df_describe[0]['mean'] / df_describe[2]['mean'],
         'crosscor_yz': df_describe[1]['mean'] / df_describe[2]['mean'],
+        'crosscor_fftxz': axisx_fft_describe['mean'] / axisz_fft_describe['mean'],
+        'crosscor_fftyz': axisy_fft_describe['mean'] / axisz_fft_describe['mean'],
         'avg_peak_count': np.mean(len(axisx_peaks) + len(axisy_peaks) + len(axisz_peaks)),
         'avg_dist_peaksx' : avg_dist_peaksx,
         'avg_dist_peaksy' : avg_dist_peaksy,
@@ -72,3 +74,28 @@ if directory == 'train':
     features_df.to_csv('features.csv', index = False)
 elif directory == 'test':
     features_df.to_csv('features_test.csv', index = False)
+
+# data visualization
+
+# data_df = pd.read_csv('train/10003.csv', header = None)
+
+# #FFT test
+# axisx_fft = pd.Series(np.abs(np.fft.fft(data_df[0])))
+# data_df[0].plot()
+# plt.show()
+# print(find_peaks(axisx_fft)[0])
+
+# axisy_fft = pd.Series(np.abs(np.fft.fft(data_df[0])))
+# axisz_fft = pd.Series(abs(np.fft.fft(data_df[0])))
+# # pd.Series(np.fft.fft(pd.Series(data_df[0]))).plot()
+# # plt.show()
+
+# mag_person1 = features_df.loc[features_df['label'] == 4]['magnitude_freq_dmn']
+# mag_person2 = features_df.loc[features_df['label'] == 6]['magnitude_freq_dmn']
+
+# plt.plot(range(450), mag_person1, color = 'r', label = 'person 3')
+# plt.plot(range(450), mag_person2, color = 'b', label = 'person 2')
+# plt.xlabel('samples')
+# plt.ylabel('magnitude')
+# plt.legend()
+# plt.show()
