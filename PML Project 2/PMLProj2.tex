@@ -148,11 +148,45 @@ After comparing with the ground-truth, the accuracy scores were the following:
 \end{tabular}
 \end{center}
 
+\section{BIRCH Algorithm}
+The balanced iterative reducing and clustering using hierarchies\cite{BIRCH} algorithm was also used on the encodings obtained from the pre-processing of the images taking part of the dataset, courtesy of the SkLearn library\cite{BIRCHskl}.
+
+In this case, the parameters used for the model were: 4 clusters after the final clustering step and a threshold (by which the radius of the subcluster obtained by merging a new sample and the closest subcluster) value of 0.08. After fitting the training data, the scatterplot from the figure below was obtained.
+
 \newpage
 
-\section{Conclusion}
-In the case of the Mean-Shift algorithm, the results were, although interesting, considering the unfitness of the algorithms for the task at hand, somewhat unsatisfactory, based on the metrics used to measure its performance.
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.75]{figures/birchscatterplot.png}
+	\caption{30 Images from Cluster Four}
+\end{figure}
 
+Similar to the Mean-Shift section, interpretations for the four clusters were conducted and the conclusions were:
+
+\begin{itemize}
+	\item Cluster one seemed to be composed mostly of fake children/young women,
+	\item cluster two of real women,
+	\item cluster three of real women,
+	\item cluster four of real, older men.
+\end{itemize}
+
+\subsection{Scoring}
+Following the same idea as in the last section, the following scores were computed:
+
+\begin{center}
+\begin{tabular}{||c|c||} 
+ \hline
+ Train accuracy & Validation accuracy \\
+ \hline\hline
+ 0.543 & 0.535 \\
+ \hline
+\end{tabular}
+\end{center}
+
+\section{Conclusion}
+In the case of both Mean-Shift algorithms, the results were, although interesting, considering the unfitness of the algorithms for the task at hand, somewhat unsatisfactory, based on the metrics used to measure their performance.
+
+\newpage
 \bibliographystyle{IEEEtran}
 
 %\bibliography{template} %-->reference list is on the template.bib file
@@ -163,6 +197,8 @@ In the case of the Mean-Shift algorithm, the results were, although interesting,
 	\bibitem[3]{facenet}\url{https://github.com/davidsandberg/facenet}
 	\bibitem[4]{kerasfacenet}\url{https://pypi.org/project/keras-facenet/}
 	\bibitem[5]{sklearnms}\url{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html}
+	\bibitem[6]{BIRCH}\url{https://en.wikipedia.org/wiki/BIRCH}
+	\bibitem[7]{BIRCHskl}\url{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.Birch.html}
 \end{thebibliography}
 
 \end{document}
