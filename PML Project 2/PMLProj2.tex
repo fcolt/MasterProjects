@@ -1,0 +1,204 @@
+\documentclass{article}
+\usepackage[a4paper, portrait, margin=1.1811in]{geometry}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\usepackage{etoolbox}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{xcolor} 
+\usepackage[colorlinks, citecolor=cyan]{hyperref}
+\usepackage{caption}
+\captionsetup[figure]{name=Figure}
+\graphicspath{ {./images/} }
+\usepackage{scrextend}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\newcounter{lemma}
+\newtheorem{lemma}{Lemma}
+\newcounter{theorem}
+\newtheorem{theorem}{Theorem}
+
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\renewcommand{\headrulewidth}{0pt}
+	\renewcommand{\familydefault}{\sfdefault}
+}
+
+%\pagestyle{plain}
+\makeatletter
+\patchcmd{\@maketitle}{\LARGE \@title}{\fontsize{16}{19.2}\selectfont\@title}{}{}
+\makeatother
+
+\usepackage{authblk}
+\renewcommand\Authfont{\fontsize{10}{10.8}\selectfont}
+\renewcommand\Affilfont{\fontsize{10}{10.8}\selectfont}
+\renewcommand*{\Authsep}{, }
+\renewcommand*{\Authand}{, }
+\renewcommand*{\Authands}{, }
+\setlength{\affilsep}{2em}  
+\newsavebox\affbox
+\author{\textbf{Olteanu Fabian Cristian}}
+\affil{FMI, AI Master, Year 1
+}
+
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsection{12pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsubsection{12pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+
+\titleformat{\section}{\normalfont\fontsize{10}{15}\bfseries}{\thesection.}{1em}{}
+\titleformat{\subsection}{\normalfont\fontsize{10}{15}\bfseries}{\thesubsection.}{1em}{}
+\titleformat{\subsubsection}{\normalfont\fontsize{10}{15}\bfseries}{\thesubsubsection.}{1em}{}
+
+\titleformat{\author}{\normalfont\fontsize{10}{15}\bfseries}{\thesection}{1em}{}
+
+\title{\textbf{\huge Practical Machine Learning Project 2 Report}}
+\date{}    
+
+\begin{document}
+
+\pagestyle{headings}	
+\newpage
+\setcounter{page}{1}
+\renewcommand{\thepage}{\arabic{page}}
+
+
+	
+\captionsetup[figure]{labelfont={bf},labelformat={default},labelsep=period,name={Figure }}	\captionsetup[table]{labelfont={bf},labelformat={default},labelsep=period,name={Table }}
+\setlength{\parskip}{0.5em}
+	
+\maketitle
+	
+\noindent\rule{15cm}{0.4pt}
+
+\section{Dataset}
+The dataset that was used is "Real vs Fake Face Classification"\cite{dataset}. It contains a total of 1709 images that are split in train and validation folders (the data from the test folder was not used). The train split is composed of 1197 pictures, out of which 532 are labeled as fake and 665 as real. Additionally, the validation split has a total of 512 items, 228 of which are fake and 284 are real, so the dataset is mostly balanced. As such, no data augmentation method was employed.
+
+The images are labeled as being either real or AI generated (via GAN \cite{gan}). Although a supervised learning would be better suited to achieve this goal, it is interesting to consider the usage of algorithm that employ unsupervised learning. In this case, the Mean-Shift algorithm was used.
+
+\section{Data preprocessing}
+The first step taken was to embed from the data (feature extraction) using a pre-trained face detection model (FaceNet, David Sandberg - model "20180402-114759" \cite{facenet}). "20180402-114759" was trained on another dataset composed of 3.31 million images. This model calculates embeddings of 512 values for each image processed. A very useful tool that was taken advantage of was the keras\_facenet \cite{kerasfacenet} Python library, which is a wrapper of the discussed model that streamlined the process of retrieving the embeddings for the images at hand. 
+
+After these embeddings were extracted, Principal Component Analysis was conducted on the computed arrays, reducing the dimensionality of these (from 512 to 2), in order to illustrate the data and execute the Mean-Shift clustering algorithm.
+
+\section{The Mean-Shift Algorithm}
+The algorithm used on the data is part of the SkLearn Python library \cite{sklearnms}. SkLearn also offers a way of estimating its hyperparameter, the bandwith. Taking all of this into account, the bandwith was estimated on the training split, using a quantile value of 0.0855.
+
+After the model was fit with the training data, a scatter plot was computed where the clusters computed by the algorithm are shown (Fig 1).
+
+In addition to the scatterplot, in an attempt to understand the results, the images taking part of the clusters were grouped based on the model's output. In figures 2 through 5, examples of snippets of 30 images from their respective clusters can be observed.
+
+\newpage
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.75]{figures/scatterplot.png}
+	\caption{Scatterplot of the Computed Clusters}
+\end{figure}
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.3]{figures/clusterone.png}
+	\caption{30 Images from Cluster One}
+\end{figure}
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.3]{figures/clustertwo.png}
+	\caption{30 Images from Cluster Two}
+\end{figure}
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.3]{figures/clusterthree.png}
+	\caption{30 Images from Cluster Three}
+\end{figure}
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.3]{figures/clusterfour.png}
+	\caption{30 Images from Cluster Four}
+\end{figure}
+
+\newpage 
+
+\subsection{Scoring}
+An attempt was made to create a scoring metric (comparing
+the results to the ground truth, the labels of the dataset). In order to achieve this, an interpretation of the four clusters was required, so as to discern between real and AI-generated images. Based on the four snippets that were presented above, the final interpretation was the following:
+\begin{itemize}
+	\item Cluster one is mainly composed of fake men,
+	\item cluster two of real women,
+	\item cluster three of real men,
+	\item cluster four of fake women/children. 
+\end{itemize}
+
+After comparing with the ground-truth, the accuracy scores were the following:
+
+\begin{center}
+\begin{tabular}{||c|c||} 
+ \hline
+ Train accuracy & Validation accuracy \\
+ \hline\hline
+ 0.532 & 0.519 \\
+ \hline
+\end{tabular}
+\end{center}
+
+\section{BIRCH Algorithm}
+The balanced iterative reducing and clustering using hierarchies\cite{BIRCH} algorithm was also used on the encodings obtained from the pre-processing of the images taking part of the dataset, courtesy of the SkLearn library\cite{BIRCHskl}.
+
+In this case, the parameters used for the model were: 4 clusters after the final clustering step and a threshold (by which the radius of the subcluster obtained by merging a new sample and the closest subcluster) value of 0.08. After fitting the training data, the scatterplot from the figure below was obtained.
+
+\newpage
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.75]{figures/birchscatterplot.png}
+	\caption{30 Images from Cluster Four}
+\end{figure}
+
+Similar to the Mean-Shift section, interpretations for the four clusters were conducted and the conclusions were:
+
+\begin{itemize}
+	\item Cluster one seemed to be composed mostly of fake children/young women,
+	\item cluster two of real women,
+	\item cluster three of real women,
+	\item cluster four of real, older men.
+\end{itemize}
+
+\subsection{Scoring}
+Following the same idea as in the last section, the following scores were computed:
+
+\begin{center}
+\begin{tabular}{||c|c||} 
+ \hline
+ Train accuracy & Validation accuracy \\
+ \hline\hline
+ 0.543 & 0.535 \\
+ \hline
+\end{tabular}
+\end{center}
+
+\section{Conclusion}
+In the case of both Mean-Shift algorithms, the results were, although interesting, considering the unfitness of the algorithms for the task at hand, somewhat unsatisfactory, based on the metrics used to measure their performance.
+
+\newpage
+\bibliographystyle{IEEEtran}
+
+%\bibliography{template} %-->reference list is on the template.bib file
+
+\begin{thebibliography}{1.7} 
+	\bibitem[1]{dataset}\url{https://www.kaggle.com/datasets/undersc0re/fake-vs-real-face-classification}
+	\bibitem[2]{gan}\url{https://en.wikipedia.org/wiki/Generative_adversarial_network}
+	\bibitem[3]{facenet}\url{https://github.com/davidsandberg/facenet}
+	\bibitem[4]{kerasfacenet}\url{https://pypi.org/project/keras-facenet/}
+	\bibitem[5]{sklearnms}\url{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html}
+	\bibitem[6]{BIRCH}\url{https://en.wikipedia.org/wiki/BIRCH}
+	\bibitem[7]{BIRCHskl}\url{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.Birch.html}
+\end{thebibliography}
+
+\end{document}
