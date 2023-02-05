@@ -107,11 +107,45 @@ $\left\{
 \end{enumerate}
 \end{tabular}
 \right.$
+\subsection{The Back-Chaining procedure}
+The back-chaining procedure is an algorithm that can be used to decided whether a full set of sentences can be entailed or not from a given KB. It is expressed in pseudocode below \cite{backchaining}. 
 
+\algrenewcommand\algorithmicrequire{\textbf{Input:}}
+\algrenewcommand\algorithmicensure{\textbf{Output:}}
+\algnewcommand\algorithmicforeach{\textbf{for each}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+\begin{algorithm}
+\begin{algorithmic}
+\caption{SOLVE($q_1,...,q_n$)}\label{alg:cap}
+\Require a finite list of atomic sentences $q_1,...,q_n$
+\Ensure "yes" or "no" depending on whether a given KB entails all of the $q_i$
+\If{$n=0$}
+	\State \Return yes
+\EndIf
+\ForEach {clause $c \in KB$}
+\If{$c=\left[q_1, \neg p_1,...,\neg p_m\right] and SOLVE\left[p_1,...,p_m,q_2,...,q_n\right]$}
+	\State \Return yes
+\EndIf
+\EndFor
+\State \Return no
+\end{algorithmic}
+\end{algorithm}
+
+This algorithm was implemented in Prolog following this way of thinking:
+
+\begin{itemize}
+	\item The knowledge base (the rules from the previous subsection) is read from an external file and the following three questions are asked by the program: "Is the person Romanian?", "Is the person a civilian?" and "Does the person own a gun?" (typing "stop." in the console will interrupt this and proceed with the answers gathered up to that point).
+	\item The back-chaining procedure is implemented as a predicate called backchaining/2, which takes the KB and a list of atomic clauses (Q) that are based on the answers given by the user. For example, should the user answer "yes", "yes" and "no", the program would assign the values a, b and not(c) to Q.  
+	\item If Q is empty, the predicate returns true
+	\item If Q is not empty, the predicate foreach/2 is used to iterate through KB, in conjuncture with a custom predicate, do\_loop/3, which takes a clause from the KB, the KB itself and Q.
+	\item The do\_loop predicate simulates the for-block from Algorithm 1. It first sorts the KB Clause from the respective iteration, since doing that to a positive horn clause arranges the elements in such a way that the positive atomic sentence is placed first ($q_1, \neg p_1,..., \neg p_m$).
+	\item Finally, another custom predicate called if\_condition/4, is used to compare the heads of the sorted KB Clause and of the Q list and to call the backchaining predicate recursively with the respective parameters from the algorithm presented above. If the condition is met, the procedure returns false (in order to stop further execution), and the message "yes" is displayed.
+\end{itemize}
 
 \newpage
 \bibliographystyle{IEEEtran}
 \begin{thebibliography}{1.7} 
+\bibitem[1]{backchaining} \color{cyan}Ronald Brachman, Hector Levesque, “Knowledge Representation and Reasoning,” \textit{Morgan Kaufmann}, p. 92, 2004 
 \end{thebibliography}
 
 \newpage
