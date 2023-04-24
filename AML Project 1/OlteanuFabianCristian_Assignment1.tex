@@ -97,9 +97,9 @@ In order to justify the fact that $VCdim(\mathcal{H})=2023$, we first have to pr
 \end{align*}
 so $\omega \cdot e_0 - \omega_0=l_0$ and for all $i=\overline{1,2022}$, $\omega \cdot e_i - \omega_0 = l_i$ (for example, $\omega \cdot e_1 - \omega_0 = \omega_1 - \omega_0 = \omega_0 + l_1 - \omega_0 = l_1$. This proves that $B$ is shattered by $\mathcal{H}$ and, since $|B|=2023$, $VCdim(\mathcal{H}) \geq 2023$. Additionally, this statement holds for any $\omega_0,...,\omega_{2022} \in \mathbb{R}$.
 
-The proof of $VCdim(\mathcal{H}) < 2024$ can be achieved by utilizing Radon's Lemma, which states that for a set $S$ from $\mathbb{R}^d$, $|S|=d+2$, there are two subsets of $S$ with the property that their convex hulls intersect. Starting from this theorem, we can construct a set $S={y_1,...,y_{2024}}$ and assign to each element the label 1. Now, if we were to split $S$ according to Radon's Lemma, we would arrive at the conclusion that one point always lies in the convex hulls of both subsets from $S$, so $VCdim(\mathcal{H}) < 2024$ \cite{vcdim2023}.
+The proof of $VCdim(\mathcal{H}) < 2024$ can be achieved by utilizing Radon's Lemma, which states that for a set $S$ from $\mathbb{R}^d$, $|S|=d+2$, there are two subsets of $S$ with the property that their convex hulls intersect. Starting from this theorem, we can construct a set $S=\{y_1,...,y_{2024}\}$ and assign to each element the label 1. Now, if we were to split $S$ according to Radon's Lemma, we would arrive at the conclusion that one point always lies in the convex hulls of both subsets from $S$ ($\mathcal{H}$ will never be able to realize the labels $S$), so $VCdim(\mathcal{H}) < 2024$ \cite{vcdim2023}.
 
-Thus, it is proven that $VCdim(\mathcal{H})=2023$ for any $\omega\in\mathbb{R}^{2023}$, so the original statement is also valid.
+Thus, it is proven that $VCdim(\mathcal{H})=2023$ for any $\omega\in\mathbb{R}^{2022}$ and $\omega_0 \in \mathbb{R}$, so the original statement is also valid.
 \subsection{}
 Let $\mathcal{H}$ be our hypothesis class, where:
 $
@@ -117,7 +117,13 @@ Let's consider the realizability assumption: there exists some $h_a^*\in\mathcal
 \subsection{}
 We know that $VCdim(\mathcal{H})$ is at least greater or equal than 1, since the hypothesis class contains non-constant classifiers, so it is able to shatter any set $S_0=\{x_0\in\mathbb{R}^3\}$, where $|S_0|=1$, regardless of $a$.
 
-Let's take $S=\{x_0, x_1\}\subset\mathbb{R}^3$, $|S|=2$ and set $a=1$.
+Let's take $S=\{x_0, x_1\}\subset\mathbb{R}^3$, $|S|=2$ and assign a labelling $L=\{l_0,l_1\}$. Our hypothesis class is composed of classifiers which output positives when the input is part of the origin-centered ball of radius $a$ and outputs negatives otherwise.
+
+It is easy to see that when $S$ is composed of two collinear points $x_0=(x_{01},0,0)$ and $x_1=(x_{11},0,0)$ (on the x-axis), $x_{01} \leq x_{11}$, any classifier from $\mathcal{H}$ will always missclassify them when their ground-truth labels are $L=\{-1,1\}$. 
+
+For example, if we take $x_0 = (0.5,0,0)$ and $x_1=(-0.5,0,0)$ and set $L=\{-1,1\}$: $h_{a=1}(x_0) = h_{a=1}(x_1) =\mathbf{1}_{[\sqrt{(0.5)^2}\leq 1]}=1$, so the classifier mislabels them as being both of the same category when in truth, their labels are different. This proves that $VCdim(\mathcal{H}) < 2$.
+
+Taking into account the proofs from above, $VCdim(\mathcal{H}) = 1$.
 \newpage
 
 %\bibliography{template} %-->reference list is on the template.bib file
