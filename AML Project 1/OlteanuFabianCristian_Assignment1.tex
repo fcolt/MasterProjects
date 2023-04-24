@@ -82,10 +82,10 @@
 \subsection{}
 Let $\mathcal{H}$ be our hypothesis class, where:
 $
-\mathcal{H}=\{h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}:\mathbb{R}^{2022} \rightarrow \{0,1\}|h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}(x) = \mathbf{1}_{\omega_1x_1 + ... + \omega_nx_n \leq \omega_0}(x), \omega_0,\omega_1,\omega_2,...,\omega_{2022}\in \{1,2\}\}.
+\mathcal{H}=\{h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}:\mathbb{R}^{2022} \rightarrow \{0,1\}|h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}(x) = \mathbf{1}_{\omega_1x_1 + ... + \omega_{2022}x_{2022} \leq \omega_0}(x), \omega_0,\omega_1,\omega_2,...,\omega_{2022}\in \{1,2\}\}.
 $
 
-In other words, $\mathcal{H}$ is a finite class (because components of $\omega$ can only be either 1 or 2) composed of halfspaces in $\mathbb{R}^{2022}$. Furthermore, if we denote $\omega=(\omega_1,...,\omega_{2022})\in \mathbb{R}^{2022}$, the following expressions are equivalent: 
+In other words, $\mathcal{H}$ is a finite class (because components of $\omega$ and $\omega_0$ can only be either 1 or 2, so $|\mathcal{H}|=2^{2023}$) composed of classifiers which output positives depending whether the 2022-dimensional vector $x$ belongs in some halfspace. Furthermore, if we denote $\omega=(\omega_1,...,\omega_{2022})\in \mathbb{R}^{2022}$, the following expressions are equivalent: 
 $$
 h_\omega(x)=\mathbf{1}_{\omega_1x_1 + ... + \omega_nx_n \leq \omega_0}=\mathbf{1}_{\omega \cdot x \leq \omega_0}=sgn(\omega \cdot x - \omega_0),
 $$ where $sgn$ is the signum function.
@@ -97,13 +97,13 @@ In order to justify the fact that $VCdim(\mathcal{H})=2023$, we first have to pr
 \end{align*}
 so $\omega \cdot e_0 - \omega_0=l_0$ and for all $i=\overline{1,2022}$, $\omega \cdot e_i - \omega_0 = l_i$ (for example, $\omega \cdot e_1 - \omega_0 = \omega_1 - \omega_0 = \omega_0 + l_1 - \omega_0 = l_1$. This proves that $B$ is shattered by $\mathcal{H}$ and, since $|B|=2023$, $VCdim(\mathcal{H}) \geq 2023$. Additionally, this statement holds for any $\omega_0,...,\omega_{2022} \in \mathbb{R}$.
 
-The proof of $VCdim(\mathcal{H}) < 2024$ can be achieved by utilizing Radon's Lemma, which states that for a set $S$ from $\mathbb{R}^d$, $|S|=d+2$, there are two subsets of $S$ with the property that their convex hulls intersect. Starting from this theorem, we can construct a set $S=\{y_1,...,y_{2024}\}$ and assign to each element the label 1. Now, if we were to split $S$ according to Radon's Lemma, we would arrive at the conclusion that one point always lies in the convex hulls of both subsets from $S$ ($\mathcal{H}$ will never be able to realize the labels $S$), so $VCdim(\mathcal{H}) < 2024$ \cite{vcdim2023}.
+The proof of $VCdim(\mathcal{H}) < 2024$ can be achieved by utilizing Radon's Lemma, which states that for a set $S$ from $\mathbb{R}^d$, $|S|=d+2$, there are two subsets of $S$ with the property that their convex hulls intersect. Starting from this theorem, we can construct a set $S=\{y_1,...,y_{2024}\}$ and assign to each element the label 1. Now, if we were to split $S$ according to Radon's Lemma, we would arrive at the conclusion that one point always lies in the convex hulls of both subsets from $S$ ($\mathcal{H}$ will never be able to realize the labels of $S$), so $VCdim(\mathcal{H}) < 2024$ \cite{vcdim2023}.
 
 Thus, it is proven that $VCdim(\mathcal{H})=2023$ for any $\omega\in\mathbb{R}^{2022}$ and $\omega_0 \in \mathbb{R}$, so the original statement is also valid.
 \subsection{}
 Let $\mathcal{H}$ be our hypothesis class, where:
 $
-\mathcal{H}=\{h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}:\mathbb{R}^{2022}\in\{0,1\}|h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}(x) = \mathbf{1}_{\omega_1x_1 + ... + \omega_nx_n \leq \omega_0}(x), \omega_0, \omega_1,\omega_2,...,\omega_{2022}\in \mathbb{R}\}.
+\mathcal{H}=\{h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}:\mathbb{R}^{2022}\in\{0,1\}|h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}(x) = \mathbf{1}_{\omega_1x_1 + ... + \omega_{2022}x_{2022} \leq \omega_0}(x), \omega_0, \omega_1,\omega_2,...,\omega_{2022}\in \mathbb{R}\}.
 $
 $\mathcal{H}$ is infinite because $\omega_0,...,\omega_{2022}\in\mathbb{R}$. $VCdim(\mathcal{H})$ is also 2023 as described in subsection $a$.
 \subsection{}
@@ -117,13 +117,68 @@ Let's consider the realizability assumption: there exists some $h_a^*\in\mathcal
 \subsection{}
 We know that $VCdim(\mathcal{H})$ is at least greater or equal than 1, since the hypothesis class contains non-constant classifiers, so it is able to shatter any set $S_0=\{x_0\in\mathbb{R}^3\}$, where $|S_0|=1$, regardless of $a$.
 
-Let's take $S=\{x_0, x_1\}\subset\mathbb{R}^3$, $|S|=2$ and assign a labelling $L=\{l_0,l_1\}$. Our hypothesis class is composed of classifiers which output positives when the input is part of the origin-centered ball of radius $a$ and outputs negatives otherwise.
+Let's take $S=\{x_0, x_1\}\subset\mathbb{R}^3$, $|S|=2$ and assign a labelling $L=\{l_0,l_1\}$. Our hypothesis class is composed of classifiers which output positives when the input is part of the origin-centered ball of radius $a$ ($B_a$) and outputs negatives otherwise.
 
-It is easy to see that when $S$ is composed of two collinear points $x_0=(x_{01},0,0)$ and $x_1=(x_{11},0,0)$ (on the x-axis), $x_{01} \leq x_{11}$, any classifier from $\mathcal{H}$ will always missclassify them when their ground-truth labels are $L=\{-1,1\}$. 
+We need to prove that $\mathcal{H}$ can't shatter $S$, or in other words, to prove that all possible labellings $L$ of the set $S$ can't be realized by functions from $\mathcal{H}$. In our context there are four possible cases: 
+\begin{enumerate}
+	\item $x_0,x_1\in B_a$,
+	\item $x_0\in B_a$ and $x_1\notin B_a$,
+	\item $x_0,x_1\notin B_a$,
+	\item $x_0\notin B_a$ and $x_1\in B_a$.
+\end{enumerate}
+The last two cases are equivalent to the first two if we change the labels, so we will only focus on the former two.
 
-For example, if we take $x_0 = (0.5,0,0)$ and $x_1=(-0.5,0,0)$ and set $L=\{-1,1\}$: $h_{a=1}(x_0) = h_{a=1}(x_1) =\mathbf{1}_{[\sqrt{(0.5)^2}\leq 1]}=1$, so the classifier mislabels them as being both of the same category when in truth, their labels are different. This proves that $VCdim(\mathcal{H}) < 2$.
+\underline{Case 1}: It is obvious to see that there is no function in $\mathcal{H}$ that will correctly label points from $S$ when the ground-truth is $L=\{-1,1\}$ or $L=\{1,-1\}$.
 
-Taking into account the proofs from above, $VCdim(\mathcal{H}) = 1$.
+\underline{Case 2}: Functions in $\mathcal{H}$ will mislabel points from $S$ when $L=\{1,1\}$ or $L=\{-1,-1\}$.
+
+Taking this into account, we can conclude that $\mathcal{H}$ does not shatter $S$, so $VCdim(\mathcal{H}) < 2$ and, furthermore, that $VCdim(\mathcal{H})=1$. 
+
+\section{}
+$\mathcal{H}=\{ h_{\theta_1,\theta_2}:\mathbb{R}\rightarrow{0,1}| h_{\theta_1,\theta_2}(x)=h_{\theta_1,\theta_2}(x_1,x_2)=\mathbf{1}_{[\theta_1+x_1sin\theta_2+x_2sin\theta_2>0]}, \theta_1,\theta_2 \in\mathbb{R}\}$ is our hypothesis class. It can be observed that, similar to the example given in the first exercise, the class is also composed of classifiers which output positives depending whether the 2-dimensional vector $x$ belongs in some halfspace. Following a proof very similar to the one described in the first exercise will render the following result: $VCdim(\mathcal{H})=3$.
+
+First, we need to prove that there exists a set $C=\{c_0,c_1,c_2\}\in\mathbb{R}^3$ which is shattered by $\mathcal{H}$. Let's fix $c_0=(0,0),c_1=(1,0),c_2=(0,1)$ and assign the labelling $L=\{l_0,l_1,l_2\}$ to $C$. We want to find $h_{\theta_1,\theta_2}(x)$ such that $h_{\theta_1,\theta_2}(c_i)=l_i$, $\forall l_i\in\{-1,1\}$, $i=\overline{0,2}$.
+
+We will first make the following notations: $\omega_0 = \theta_1$, $\omega_1 = sin\theta_2$, $\omega_2 = cos\theta_2$ and set:
+\begin{align*}
+\omega_0 &= l_0, \\
+\omega_i &= -\omega_0 + l_i, i\in\{1,2\}.
+\end{align*}
+
+It immediately follows that $h_{\theta_1,\theta_2}(c_0)=\mathbf{1}_{l_0>0}$, $h_{\theta_1,\theta_2}(c_1)=\mathbf{1}_{l_1>0}$ and $h_{\theta_1,\theta_2}(c_2)=\mathbf{1}_{l_2>0}$, which are always going to output the ground-truth labels, so $\mathcal{H}$ shatters $C$ and $VCdim(\mathcal{H})\geq 3$.
+
+Proving that $VCdim(\mathcal{H}) < 4$ can be done following the same way of thinking as in the previous example. More explicitly, we start by defining our set $X=\{x_1,x_2,x_3,x_4\}$. If we consider the following system of equations:
+$$
+\begin{pmatrix}
+x_1 & x_2 & x_3 & x_4\\
+1 & 1 & 1 & 1
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\lambda_1 \\
+\lambda_2 \\
+\lambda_3 \\
+\lambda_4
+\end{pmatrix} = 0,
+$$
+with the variables $\lambda_1,\lambda_2,\lambda_3,\lambda_4$, we know that there exist solutions $\lambda_{0i}\neq 0, i\in\mathbb{N}, \lambda_{0i}\in\mathbb{R}$, because there are only two equations and four variables. 
+
+If we construct $P=\{i|\lambda_{0i}>0\}$ and $N=\{j|\lambda_{0j}<0\}$, we get the following relation:
+$$
+\lambda^*=\sum_{i\in P}{\lambda_{0i}}=-\sum_{j\in N}{\lambda_{0j}}\neq 0.
+$$
+Additionally, we know that $\displaystyle\sum_{i=1}^{4}{\lambda_{0i}x_i}=0$, so we can write:
+$$
+x^*=\sum_{i\in P}{\lambda_{0i}x_i}=-\sum_{j\in N}{\lambda_{0j}x_j}\neq 0.
+$$
+
+Now, if we compute the point
+$$
+\dfrac{x^*}{\lambda^*}=\sum_{i\in P}{\dfrac{\lambda_{0i}}{\lambda^*}x_i}=-\sum_{j\in N}{\dfrac{\lambda_{0j}}{\lambda^*}x_j},
+$$
+we can observe that the point $\dfrac{x^*}{\lambda^*}$ lies in both convex hulls of $X_1=\{x_i|i\in P\}$ and $X_2=\{x_j|j\in N\}$. 
+
+We have thus used Radon's Theorem to prove that $\mathcal{H}$ cannot shatter $X=\{x_1,x_2,x_3,x_4\}$ and, as such, $VCdim(\mathcal{H}) < 4$, so $VCdim(\mathcal{H})=3$.
 \newpage
 
 %\bibliography{template} %-->reference list is on the template.bib file
