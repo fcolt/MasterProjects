@@ -80,35 +80,44 @@
 
 \section{Exercise 1}
 \subsection{}
-Let H be our hypothesis class, where:
+Let $\mathcal{H}$ be our hypothesis class, where:
 $
-H=\{h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}:\mathbb{R}^{2022} \rightarrow \{0,1\}|h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}(x) = \mathbf{1}_{\omega_1x_1 + ... + \omega_nx_n \leq \omega_0}, \omega_0,\omega_1,\omega_2,...,\omega_{2022}\in \{1,2\}\}.
+\mathcal{H}=\{h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}:\mathbb{R}^{2022} \rightarrow \{0,1\}|h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}(x) = \mathbf{1}_{\omega_1x_1 + ... + \omega_nx_n \leq \omega_0}(x), \omega_0,\omega_1,\omega_2,...,\omega_{2022}\in \{1,2\}\}.
 $
 
-In other words, $H$ is a finite class (because components of $\omega$ can only be either 1 or 2) composed of halfspaces in $\mathbb{R}^{2022}$. Furthermore, if we denote $\omega=(\omega_1,...,\omega_{2022})\in \mathbb{R}^{2022}$, the following expressions are equivalent: 
+In other words, $\mathcal{H}$ is a finite class (because components of $\omega$ can only be either 1 or 2) composed of halfspaces in $\mathbb{R}^{2022}$. Furthermore, if we denote $\omega=(\omega_1,...,\omega_{2022})\in \mathbb{R}^{2022}$, the following expressions are equivalent: 
 $$
 h_\omega(x)=\mathbf{1}_{\omega_1x_1 + ... + \omega_nx_n \leq \omega_0}=\mathbf{1}_{\omega \cdot x \leq \omega_0}=sgn(\omega \cdot x - \omega_0),
 $$ where $sgn$ is the signum function.
 
-In order to justify the fact that $VCdim(H)=2023$, we first have to prove that $VCdim(H)\geq2023$ and afterwards $VCdim(H)<2024$. We can consider the standard basis of $\mathbb{R}^{2022}$ plus the origin ($e_0=\mathbf{0}_{2022}$) as a set $B=\{e_0,...,e_{2022}\}$ and prove that it is shattered by $H$. Given a certain labelling $l_0,...,l_{2022}$ to these points, we set the following relations:
+In order to justify the fact that $VCdim(\mathcal{H})=2023$, we first have to prove that $VCdim(\mathcal{H})\geq2023$ and afterwards $VCdim(\mathcal{H})<2024$. We can consider the standard basis of $\mathbb{R}^{2022}$ plus the origin ($e_0=\mathbf{0}_{2022}$) as a set $B=\{e_0,...,e_{2022}\}$ and prove that it is shattered by $\mathcal{H}$. Given a certain labelling $l_0,...,l_{2022}$ to these points, we set the following relations:
 \begin{align*}
 \omega_0 &= -l_0, \\
 \omega_i &= \omega_0 + l_i, i=\overline{1,2022},
 \end{align*}
-so $\omega \cdot e_0 - \omega_0=l_0$ and for all $i=\overline{1,2022}$, $\omega \cdot e_i - \omega_0 = l_i$ (for example, $\omega \cdot e_1 - \omega_0 = \omega_1 - \omega_0 = \omega_0 + l_1 - \omega_0 = l_1$. This proves that $B$ is shattered by $H$ and, since $|B|=2023$, $VCdim(H) \geq 2023$. Additionally, this statement holds for any $\omega_0,...,\omega_{2022} \in \mathbb{R}$.
+so $\omega \cdot e_0 - \omega_0=l_0$ and for all $i=\overline{1,2022}$, $\omega \cdot e_i - \omega_0 = l_i$ (for example, $\omega \cdot e_1 - \omega_0 = \omega_1 - \omega_0 = \omega_0 + l_1 - \omega_0 = l_1$. This proves that $B$ is shattered by $\mathcal{H}$ and, since $|B|=2023$, $VCdim(\mathcal{H}) \geq 2023$. Additionally, this statement holds for any $\omega_0,...,\omega_{2022} \in \mathbb{R}$.
 
-The proof of $VCdim(H) < 2024$ can be achieved by utilizing Radon's Lemma, which states that for a set $S$ from $\mathbb{R}^d$, $|S|=d+2$, there are two subsets of $S$ with the property that their convex hulls intersect. Starting from this theorem, we can construct a set $S={y_1,...,y_2024}$ and assign to each element the label 1. Now, if we were to split $S$ according to Radon's Lemma, we would arrive at the conclusion that one point always lies in the convex hulls of both subsets from $S$, so $VCdim(H) < 2024$ \cite{vcdim2023}.
+The proof of $VCdim(\mathcal{H}) < 2024$ can be achieved by utilizing Radon's Lemma, which states that for a set $S$ from $\mathbb{R}^d$, $|S|=d+2$, there are two subsets of $S$ with the property that their convex hulls intersect. Starting from this theorem, we can construct a set $S={y_1,...,y_{2024}}$ and assign to each element the label 1. Now, if we were to split $S$ according to Radon's Lemma, we would arrive at the conclusion that one point always lies in the convex hulls of both subsets from $S$, so $VCdim(\mathcal{H}) < 2024$ \cite{vcdim2023}.
 
-Thus, it is proven that $VCdim(H)=2023$ for any $\omega\in\mathbb{R}^{2023}$, so the original statement is also valid.
+Thus, it is proven that $VCdim(\mathcal{H})=2023$ for any $\omega\in\mathbb{R}^{2023}$, so the original statement is also valid.
 \subsection{}
-Let H be our hypothesis class, where:
+Let $\mathcal{H}$ be our hypothesis class, where:
 $
-H=\{h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}:\mathbb{R}^{2022}\in\{0,1\}|h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}(x) = \mathbf{1}_{\omega_1x_1 + ... + \omega_nx_n \leq \omega_0}, \omega_0, \omega_1,\omega_2,...,\omega_{2022}\in \mathbb{R}\}.
+\mathcal{H}=\{h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}:\mathbb{R}^{2022}\in\{0,1\}|h_{\omega_0, \omega_1,\omega_2,...,\omega_{2022}}(x) = \mathbf{1}_{\omega_1x_1 + ... + \omega_nx_n \leq \omega_0}(x), \omega_0, \omega_1,\omega_2,...,\omega_{2022}\in \mathbb{R}\}.
 $
-$VCdim(H)$ is also 2023. The proof is described at subsection $a$.
+$\mathcal{H}$ is infinite because $\omega_0,...,\omega_{2022}\in\mathbb{R}$. $VCdim(\mathcal{H})$ is also 2023 as described in subsection $a$.
 \subsection{}
-Let $H=\{ h_\theta:[-1,1]\rightarrow\{0,1\}|h_\theta(x)=\mathbf{1}_{sin(\theta x) \geq 0}, \theta \in \mathbb{R}\}$. If we were to consider some set $X=\{x_1,...,x_n\}\subset[-1,1]$, $H$ can shatter $X$ because $sin(\theta x)$ can oscillate at any frequency to acommodate labelling $X$. Hence, $VCdim(H)=\infty$. 
+Let $\mathcal{H}=\{ h_\theta:[-1,1]\rightarrow\{0,1\}|h_\theta(x)=\mathbf{1}_{sin(\theta x) \geq 0}(x), \theta \in \mathbb{R}\}$. If we were to consider some set $X=\{x_1,...,x_n\}\subset[-1,1]$, $\mathcal{H}$ can shatter $X$ because $sin(\theta x)$ can oscillate at any frequency to accommodate labeling $X$. Hence, $VCdim(\mathcal{H})=\infty$. 
 
+\section{}
+We have $\mathcal{H}=\{ h_a:\mathbb{R}^3\rightarrow \{0,1\}|h_a(x)=\mathbf{1}_{[||x||_2\leq a]}(x), x=(x_1,x_2,x_3)\in\mathbb{R}^3, ||x||_2 = \sqrt{x_1^2+x_2^2+x_3^2} \}$.
+\subsection{}
+Let's consider the realizability assumption: there exists some $h_a^*\in\mathcal{H}$ such that $L(h_a^*)=0$ ($a^*\in\mathbb{R}$), where $h_a^*(x)=\mathbf{1}_{[||x||_2\leq a^*]}$.
+
+\subsection{}
+We know that $VCdim(\mathcal{H})$ is at least greater or equal than 1, since the hypothesis class contains non-constant classifiers, so it is able to shatter any set $S_0=\{x_0\in\mathbb{R}^3\}$, where $|S_0|=1$, regardless of $a$.
+
+Let's take $S=\{x_0, x_1\}\subset\mathbb{R}^3$, $|S|=2$ and set $a=1$.
 \newpage
 
 %\bibliography{template} %-->reference list is on the template.bib file
