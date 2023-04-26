@@ -5,6 +5,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{helvet}
 \usepackage{etoolbox}
+\usepackage{multicol}
 \usepackage{graphicx}
 \usepackage{titlesec}
 \usepackage{amsfonts}
@@ -87,8 +88,7 @@ $
 
 In other words, $\mathcal{H}$ is a finite class (because components of $\omega$ and $\omega_0$ can only be either 1 or 2, so $|\mathcal{H}|=2^{2023}$) composed of classifiers which output positives depending whether the 2022-dimensional vector $x$ belongs in some halfspace. Furthermore, if we denote $\omega=(\omega_1,...,\omega_{2022})\in \mathbb{R}^{2022}$, the following expressions are equivalent: 
 $$
-h_\omega(x)=\mathbf{1}_{\omega_1x_1 + ... + \omega_nx_n \leq \omega_0}=\mathbf{1}_{\omega \cdot x \leq \omega_0}=sgn(\omega \cdot x - \omega_0),
-$$ where $sgn$ is the signum function.
+h_\omega(x)=\mathbf{1}_{\omega_1x_1 + ... + \omega_nx_n \leq \omega_0}=\mathbf{1}_{\omega \cdot x \leq \omega_0}.$$
 
 In order to justify the fact that $VCdim(\mathcal{H})=2023$, we first have to prove that $VCdim(\mathcal{H})\geq2023$ and afterwards $VCdim(\mathcal{H})<2024$. We can consider the standard basis of $\mathbb{R}^{2022}$ plus the origin ($e_0=\mathbf{0}_{2022}$) as a set $B=\{e_0,...,e_{2022}\}$ and prove that it is shattered by $\mathcal{H}$. Given a certain labelling $l_0,...,l_{2022}$ to these points, we set the following relations:
 \begin{align*}
@@ -158,7 +158,7 @@ Taking this into account, we can conclude that $\mathcal{H}$ does not shatter $S
 \section{}
 $\mathcal{H}=\{ h_{\theta_1,\theta_2}:\mathbb{R}\rightarrow\{0,1\}| h_{\theta_1,\theta_2}(x)=h_{\theta_1,\theta_2}(x_1,x_2)=\mathbf{1}_{[\theta_1+x_1sin\theta_2+x_2sin\theta_2>0]}, \theta_1,\theta_2 \in\mathbb{R}\}$ is our hypothesis class. It can be observed that, similar to the example given in the first exercise, the class is also composed of classifiers which output positives depending whether the 2-dimensional vector $x$ belongs in some halfspace. Following a proof very similar to the one described in the first exercise will render the following result: $VCdim(\mathcal{H})=3$.
 
-First, we need to prove that there exists a set $C=\{c_0,c_1,c_2\}\in\mathbb{R}^3$ which is shattered by $\mathcal{H}$. Let's fix $c_0=(0,0),c_1=(1,0),c_2=(0,1)$ and assign the labelling $L=\{l_0,l_1,l_2\}$ to $C$. We want to find $h_{\theta_1,\theta_2}(x)$ such that $h_{\theta_1,\theta_2}(c_i)=l_i$, $\forall l_i\in\{0,1\}$, $i=\overline{0,2}$.
+First, we need to prove that there exists a set $C=\{c_0,c_1,c_2\}\subset\mathbb{R}^3$ which is shattered by $\mathcal{H}$. Let's fix $c_0=(0,0),c_1=(1,0),c_2=(0,1)$ and assign the labelling $L=\{l_0,l_1,l_2\}$ to $C$. We want to find $h_{\theta_1,\theta_2}(x)$ such that $h_{\theta_1,\theta_2}(c_i)=l_i$, $\forall l_i\in\{0,1\}$, $i=\overline{0,2}$.
 
 We will first make the following notations: $\omega_0 = \theta_1$, $\omega_1 = sin\theta_2$, $\omega_2 = cos\theta_2$ and set:
 \begin{align*}
@@ -197,9 +197,80 @@ Now, if we compute the point
 $$
 \dfrac{x^*}{\lambda^*}=\sum_{i\in P}{\dfrac{\lambda_{0i}}{\lambda^*}x_i}=-\sum_{j\in N}{\dfrac{\lambda_{0j}}{\lambda^*}x_j},
 $$
-we can observe that the point $\dfrac{x^*}{\lambda^*}$ lies in both convex hulls of $X_1=\{x_i|i\in P\}$ and $X_2=\{x_j|j\in N\}$. 
+we can observe that the point $\dfrac{x^*}{\lambda^*}$ lies in both convex hulls of $X_1=\{x_i|i\in P\}$ and $X_2=\{x_j|j\in N\}$, so this proves that, for example, label $\{1,1,1,0\}$ is not realizable. 
 
 We have thus used Radon's Theorem to prove that $\mathcal{H}$ cannot shatter $X=\{x_1,x_2,x_3,x_4\}$ and, as such, $VCdim(\mathcal{H}) < 4$, so $VCdim(\mathcal{H})=3$.
+\section{}
+\subsection{}
+$\alpha$ denotes the aspect of the rectangles classifiers in $\mathcal{H}_\alpha$. We have three cases:
+\begin{itemize}
+	\item if $0<\alpha<1$, the rectangle's width is longer than its height,
+	\item if $\alpha = 1$, we have a square classifier,
+	\item if $\alpha > 1$, the rectangle's height is longer than its width.
+\end{itemize}
+
+Let $S=\{ (x_1,y_1),..., (x_m,y_m) | y_i = h_{a_1^*,b_1^*,a_2^*,b_2^*}, x_i\in\mathbb{R}^2 \}$ be our training set, so $h_{a_1^*,b_1^*,a_2^*,b_2^*}=\mathbf{1}_{R^*}$. In order to choose an algorithm $A$ that is an ERM, we have to take into consideration the fact that both $h^*$ and the output of $A$, $h_S=h_{a_{1S},b_{1S},a_{2S},b_{2S}}$, have the same parameter $\alpha$, so we have to take into account the three cases mentioned above. Furthermore, for each case, we have four additional edge cases: 
+\begin{enumerate}
+	\item when the points are close to the bottom edge of the rectangle,
+	\item when the points are close to the leftmost edge of the rectangle,
+	\item when the points are close to the rightmost edge of the rectangle,
+	\item when the points are close to the top edge of the rectangle.
+\end{enumerate}
+The algorithm will have to compensate the position of the rectangle of $h_S$ such that it doesn't go outside $R^*$, because the aspect ratio of both $h^*$ and $h_S$ have to be the same.
+\section{}
+$
+\mathcal{H}=\{h_\theta:\mathbb{R}\rightarrow\{0,1\}|h_\theta(x)=\mathbf{1}_{[\theta,\theta +1]\cup[\theta +2,\theta +4]\cup[\theta +6,\theta +9]}(x),\theta\in\mathbb{R}\}
+$ is our hypothesis class. We will assume that $VCdim(\mathcal{H})=4$.
+
+The first step is to prove that $VCdim(\mathcal{H})\geq 4$. Consider the set $C_0=\{c_1,c_2,c_3,c_4|c_1\leq c2\leq c_3\leq c_4\}\subset\mathbb{R}$ and the labelling $L=\{l_1,l_2,l_3,l_4\}$, $l_i\in\{0,1\}, i=\overline{1,4}$. Take $c_1 = -5$, $c_2=-4.2$, $c_3=-1.8$, $c_4=1.6$ and prove that all $2^4=16$ labels can be realized by classifiers from $\mathcal{H}$. In other words, find at least a value $\theta_i$ for each labelling such that $h_{\theta_i}$ correctly labels $C$:
+\begin{multicols}{2}
+\begin{enumerate}
+	\item For $L=\{0, 0, 0, 0\}$, take $\theta_1=  -20.0$,   $h_{\theta_1}=\mathbf 1_{[-20.0, -19.0]\cup[-18.0, -16.0]\cup[-14.0, -11.0]}$
+	\item For $L=\{0, 0, 0, 1\}$, take $\theta_2=  -6.1$,    $h_{\theta_2}=\mathbf 1_{[-6.1, -5.1]\cup[-4.1, -2.1]\cup[-0.1, 2.9]}$
+	\item For $L=\{0, 0, 1, 0\}$, take $\theta_3=  -10.1$,   $h_{\theta_3}=\mathbf 1_{[-10.1, -9.1]\cup[-8.1, -6.1]\cup[-4.1, -1.1]}$
+	\item For $L=\{0, 0, 1, 1\}$, take $\theta_4=  -2.4$,    $h_{\theta_4}=\mathbf 1_{[-2.4, -1.4]\cup[-0.4, 1.6]\cup[3.6, 6.6]}$
+	\item For $L=\{0, 1, 0, 0\}$, take $\theta_5=  -10.9$,   $h_{\theta_5}=\mathbf 1_{[-10.9, -9.9]\cup[-8.9, -6.9]\cup[-4.9, -1.9]}$
+	\item For $L=\{0, 1, 0, 1\}$, take $\theta_6=  -6.9$,    $h_{\theta_6}=\mathbf 1_{[-6.9, -5.9]\cup[-4.9, -2.9]\cup[-0.9, 2.1]}$
+	\item For $L=\{0, 1, 1, 0\}$, take $\theta_7=  -10.8$,   $h_{\theta_7}=\mathbf 1_{[-10.8, -9.8]\cup[-8.8, -6.8]\cup[-4.8, -1.8]}$
+	\item For $L=\{0, 1, 1, 1\}$, take $\theta_8=  -4.9$,    $h_{\theta_8}=\mathbf 1_{[-4.9, -3.9]\cup[-2.9, -0.9]\cup[1.1, 4.1]}$
+	\item For $L=\{1, 0, 0, 0\}$, take $\theta_9=  -14.0$,   $h_{\theta_9}=\mathbf 1_{[-14.0, -13.0]\cup[-12.0, -10.0]\cup[-8.0, -5.0]}$
+	\item For $L=\{1, 0, 0, 1\}$, take $\theta_{10}=-6.0$,   $h_{\theta_{10}}=\mathbf 1_{[-6.0, -5.0]\cup[-4.0, -2.0]\cup[0.0, 3.0]}$
+	\item For $L=\{1, 0, 1, 0\}$, take $\theta_{11}=-9.0$,   $h_{\theta_{11}}=\mathbf 1_{[-9.0, -8.0]\cup[-7.0, -5.0]\cup[-3.0, 0.0]}$
+	\item For $L=\{1, 0, 1, 1\}$, take $\theta_{12}=-5.8$,   $h_{\theta_{12}}=\mathbf 1_{[-5.8, -4.8]\cup[-3.8, -1.8]\cup[0.2, 3.2]}$
+	\item For $L=\{1, 1, 0, 0\}$, take $\theta_{13}=-13.2$,  $h_{\theta_{13}}=\mathbf 1_{[-13.2, -12.2]\cup[-11.2, -9.2]\cup[-7.2, -4.2]}$
+	\item For $L=\{1, 1, 0, 1\}$, take $\theta_{14}=-7.4$,   $h_{\theta_{14}}=\mathbf 1_{[-7.4, -6.4]\cup[-5.4, -3.4]\cup[-1.4, 1.6]}$
+	\item For $L=\{1, 1, 1, 0\}$, take $\theta_{15}=-5.2$,   $h_{\theta_{15}}=\mathbf 1_{[-5.2, -4.2]\cup[-3.2, -1.2]\cup[0.8, 3.8]}$.
+	\item For $L=\{1, 1, 1, 1\}$, take $\theta_{16}=-8.2$,   $h_{\theta_{16}}=\mathbf 1_{[-8.2, -7.2]\cup[-6.2, -4.2]\cup[-2.2, 0.8]}$
+\end{enumerate}
+\end{multicols}
+The values were obtained by using a search algorithm implemented in Python, which tried $\theta_i$ values from a set $\{-20,-19.9,...,19.9,20\}$ until one value satisfies the labelling of some points, which were also searched for via brute force. The conclusion is that $\mathcal{H}$ shatters $C_0$, so $VCdim(\mathcal{H})\geq 5$.
+
+Consider the set $C=\{c_1,c_2,c_3,c_4,c_5|c_1\leq c_2\leq c_3\leq c_4 \leq c_5\}\subset\mathbb{R}$ and the labels $L_1=\{1,0,1,0,1\}$. Assuming that $\mathcal{H}$ shatters $C$, then there exists some $h_\theta\in\mathcal{H}$ which correctly labels the points from $C$. One possible configuration can be the following:
+\begin{align*}
+	\theta & \leq c_1 \leq \theta + 1 \\
+	\theta + 1 &< c_2 < \theta + 2\\
+	\theta + 2 &\leq c_3 \leq \theta + 4\\
+	\theta + 4 &< c_4 < \theta + 6\\
+	\theta + 6 &\leq c_5 \leq \theta + 9,
+\end{align*}
+which means:
+\begin{align}
+	2 &\leq c_3 - c_1 \leq 3\\
+	3 &< c_4 - c_2 < 4 \\
+	2 &\leq c_5 - c_3 \leq 5\\
+	6 & \leq c_5 - c_1 \leq 8.	
+\end{align}
+Consider the same configuration, but with the labels $\{1,0,0,1,1\}$. We will prove that, no matter how the points are positioned, there is no way this labelling can be achieved by any $h_\theta\in\mathcal{H}$. We have two possible ways of choosing the points: 
+
+\underline{Case 1}: The first point is in the first interval, the next two are outside of it and the last two are in the second interval,
+
+\underline{Case 2}: The first point is in the second interval, the next two are outside of it and the last two are in the last interval.  
+
+The first case implies that $2 \leq c_5 - c_1 \leq 3$, but if we substract it from relation (4), we get $4<0<5$, which is impossible.
+
+The second case implies that $4\leq c_5-c_1 \leq 5$, but if we substract if from (4), we get $2\leq 0\leq 3$, which is also impossible.
+
+We've thus proven that any configuration from $C$ cannot satisfy these two labels, so $\mathcal{H}$ doesn't shatter any $C$, which means that $VCdim(\mathcal{H}) < 5$, so $VCdim(\mathcal{H})=4$.
 \newpage
 
 %\bibliography{template} %-->reference list is on the template.bib file
