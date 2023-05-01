@@ -57,10 +57,10 @@ def align_images(img1, img2, good_match_percent=0.75, ref_filename=''):
     return im1_reg, h
 
 def save_aligned_image(ref_filename, image_path, out_path):
-    im_reference = cv.imread(ref_filename, cv.IMREAD_COLOR)
-
     if not os.path.exists(out_path):
         os.mkdir(out_path) 
+
+    im_reference = cv.imread(ref_filename, cv.IMREAD_COLOR)
 
     # Read image to be aligned
     im = cv.imread(image_path, cv.IMREAD_COLOR)
@@ -71,12 +71,29 @@ def save_aligned_image(ref_filename, image_path, out_path):
     # Crop image
     cropped_image = im_reg[273 * 2 : (273 + 960) * 2,
                            547 * 2 : (547 + 956) * 2]
+    
+    # Align cropped image to grid
+    w, h = cropped_image.shape[0:2]
+    pts1 = np.float32([[0,0],[1863,0],[5,1918],[1906,1880]]) 
+    pts2 = np.float32([[0,0],[1911,0],[0,1919],[1911,1919]])
+    M = cv.getPerspectiveTransform(pts1, pts2)
+
+    warped_cropped_image = cv.warpPerspective(cropped_image, M, (w, h))
     # Write aligned image to disk.
     out_filename = "aligned_" + image_path.split('\\')[-1]
-    cv.imwrite(out_path + out_filename, cropped_image)
+    cv.imwrite(out_path + out_filename, warped_cropped_image)
 
 def save_aligned_images(ref_filename, images_path, out_path):
+    if not os.path.exists(out_path):
+        os.mkdir(out_path) 
+
     print("Reading reference image : " + ref_filename)
+    ref_img = cv.imread(ref_filename, cv.IMREAD_COLOR)
+    cropped_ref_img = ref_img[273 * 2 : (273 + 960) * 2,
+                              547 * 2 : (547 + 956) * 2]
+
+    cv.imwrite(out_path + 'template.jpg', cropped_ref_img)
+
     # Read images to be aligned
     img_filenames = [images_path + f for f in os.listdir(images_path) if f.endswith('.jpg')]
     for idx, img_filename in enumerate(img_filenames):
