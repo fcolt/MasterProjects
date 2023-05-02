@@ -28,10 +28,10 @@ def compare_annotations_regular_tasks(filename_predicted,filename_gt,verbose=0):
 			if(current_pos_p != current_pos_gt):
 				match_positions = 0
 			if(current_value_p != current_value_gt):
-				match_letters = 0	
+				match_values = 0	
 		except:
 			match_positions = 0
-			match_letters = 0		
+			match_values = 0		
 	try:
 		#verify if there are more positions + values lines in the prediction file
 		current_pos_p, current_value_p = all_lines_p[i+1].split()
@@ -97,9 +97,9 @@ def compare_annotations_bonus_task(filename_predicted,filename_gt,verbose=0):
 	return points_bonus
 
 #change this on your machine pointing to your results (txt files)
-predictions_path_root = r"C:\Users\Fabian\Desktop\Master\MasterProjects\CV Project 1\evaluation\submission_files\407_Alexe_Bogdan"
+predictions_path_root = 'scores'
 #change this on your machine to point to the ground-truth test
-gt_path_root = r"C:\Users\Fabian\Desktop\Master\MasterProjects\CV Project 1\train"
+gt_path_root = 'train'
 
 
 
@@ -108,15 +108,15 @@ verbose = 1
 total_points_regular_tasks = 0
 
 #regular tasks
-for game in range(1,5):
+for game in range(1,6):
 	for move in range(1,21):
 		
 		name_move = str(move)
 		if(move< 10):
 			name_move = '0'+str(move)
 
-		filename_predicted = predictions_path_root + "\\regular_tasks\\" + str(game) + '_' + name_move + '.txt'
-		filename_gt = gt_path_root + "\\regular_tasks\\" + str(game) + '_' + name_move + '.txt'
+		filename_predicted = predictions_path_root + "/regular_tasks/" + str(game) + '_' + name_move + '.txt'
+		filename_gt = gt_path_root + "/regular_tasks/" + str(game) + '_' + name_move + '.txt'
 
 		game_move = str(game) + '_' + name_move
 		points_position = 0
@@ -139,11 +139,11 @@ for img in range(1,11):
 	print(img)
 	name_img = str(img)
 	if(img < 10):
-		name_img = '0'+str(img)
+		name_img = '0'+str(img) 
 
 	print("name_img = ",name_img)
-	filename_predicted = predictions_path_root + "\\bonus_task\\" + name_img + '.txt'
-	filename_gt = gt_path_root + "\\bonus_task\\" + name_img + '.txt'
+	filename_predicted = predictions_path_root + "/bonus_task/" + name_img + '.txt'
+	filename_gt = gt_path_root + "/bonus_task/" + name_img + '.txt'
 
 				
 	points_bonus = 0

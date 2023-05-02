@@ -80,7 +80,7 @@ def save_aligned_image(ref_filename, image_path, out_path):
 
     warped_cropped_image = cv.warpPerspective(cropped_image, M, (w, h))
     # Write aligned image to disk.
-    out_filename = "aligned_" + image_path.split('\\')[-1]
+    out_filename = "aligned_" + image_path.split('/')[-1]
     cv.imwrite(out_path + out_filename, warped_cropped_image)
 
 def save_aligned_images(ref_filename, images_path, out_path):
