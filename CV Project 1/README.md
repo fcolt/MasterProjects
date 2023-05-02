@@ -9,4 +9,4 @@ pip install -r requirements
 python align_images.py -r 'board+dominoes/02.jpg' -p <IMAGES_PATH> '-o aligned_train/'
 ```
 (use 'board+dominoes/02.jpg' as the reference filepath as it gives the best results)
-3. Open `score_game.ipynb`, set `images_path` as the path of the output from running the last script and set `out_path` as the desired prediction folder.
+3. Open `score_game.ipynb`, set `aligned_images_path` as the path of the output from running the last script and set `out_path` as the desired prediction folder.
