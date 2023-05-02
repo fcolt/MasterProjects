@@ -2,7 +2,7 @@
 In order to run this solution, follow the steps below:
 1. Install the dependencies by running
 ```sh
-pip install -r requirements
+pip install -r requirements.txt
 ```
 2. In order to generate the aligned images, run
 ```sh
