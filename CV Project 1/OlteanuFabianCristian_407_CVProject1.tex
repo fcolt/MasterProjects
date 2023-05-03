@@ -1,0 +1,102 @@
+\documentclass{article}
+\usepackage[a4paper, portrait, margin=1.1811in]{geometry}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\usepackage{etoolbox}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{xcolor} 
+\usepackage[colorlinks, citecolor=cyan]{hyperref}
+\usepackage{caption}
+\captionsetup[figure]{name=Figure}
+\graphicspath{ {./images/} }
+\usepackage{scrextend}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\newcounter{lemma}
+\newtheorem{lemma}{Lemma}
+\newcounter{theorem}
+\newtheorem{theorem}{Theorem}
+
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\renewcommand{\headrulewidth}{0pt}
+	\renewcommand{\familydefault}{\sfdefault}
+}
+
+%\pagestyle{plain}
+\makeatletter
+\patchcmd{\@maketitle}{\LARGE \@title}{\fontsize{16}{19.2}\selectfont\@title}{}{}
+\makeatother
+
+\usepackage{authblk}
+\renewcommand\Authfont{\fontsize{10}{10.8}\selectfont}
+\renewcommand\Affilfont{\fontsize{10}{10.8}\selectfont}
+\renewcommand*{\Authsep}{, }
+\renewcommand*{\Authand}{, }
+\renewcommand*{\Authands}{, }
+\setlength{\affilsep}{2em}  
+\newsavebox\affbox
+\author{\textbf{Olteanu Fabian Cristian}}
+\affil{FMI, AI Master, Year 1
+}
+
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsection{12pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsubsection{12pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+
+\titleformat{\section}{\normalfont\fontsize{10}{15}\bfseries}{\thesection.}{1em}{}
+\titleformat{\subsection}{\normalfont\fontsize{10}{15}\bfseries}{\thesubsection.}{1em}{}
+\titleformat{\subsubsection}{\normalfont\fontsize{10}{15}\bfseries}{\thesubsubsection.}{1em}{}
+
+\titleformat{\author}{\normalfont\fontsize{10}{15}\bfseries}{\thesection}{1em}{}
+
+\title{\textbf{\huge Computer Vision Project 1}}
+\date{}    
+
+\begin{document}
+
+\pagestyle{headings}	
+\newpage
+\setcounter{page}{1}
+\renewcommand{\thepage}{\arabic{page}}
+
+
+	
+\captionsetup[figure]{labelfont={bf},labelformat={default},labelsep=period,name={Figure }}	\captionsetup[table]{labelfont={bf},labelformat={default},labelsep=period,name={Table }}
+\setlength{\parskip}{0.5em}
+	
+\maketitle
+	
+\noindent\rule{15cm}{0.4pt}
+
+\section{Introduction}
+In the following section I will explain the approach which was used in order to achieve a relatively modest score of 1.935 on the regular tasks (from running the \texttt{evaluate\_submission.py} script).
+\section{Description of the Approach}
+In broad terms, the following steps were implemented to achieve the result:
+\begin{enumerate}
+	\item The second image from the \texttt{board+dominoes} folder was used as a template whose features were extracted for SIFT matching with all other images used for training. I chose this picture because the perspective of the camera is the closest possible to being parallel to the table as opposed to the other pictures.
+	\item After the SIFT matching, the train pictures are cropped using some hand-picked values, rendering the board region of interest (SIFT matching changes the perspectives of the pictures to almost the same view amongst all of them, so cropping them using hard-coded values is fine in this case, since the regions of the board are almost the same across all images). 
+	\item After the cropping, the pictures' perspectives are further warped in an attempt to perfectly align the boards' horizontal and vertical lines as perfectly parallel to eachother by calling the OpenCV \texttt{cv2.getPerspectiveTransform} method using as parameters some hand picked pixel values representing the region of interest containing the warped board (taken from the unwarped \texttt{align\_train\_1\_01.jpg} image produced from an earlier version of the script) and the positions of the corner pixels of the same image. The output gives an almost perfectly aligned image in all cases, like in figure 1.
+	\item Template matching is done on all train images using \texttt{align\_train\_1\_01.jpg} as the template. The output is a grayscale image with patches ready for classification. This results in pictures being tiled like in figure 2.
+	\item The \texttt{score\_game.ipynb} script begins to first classify each patch based on whether or not it considers it to be a domino tile. This is achieved by comparing the whites and blacks from the binary image of each patch (from a hand-picked threshold) with the minimum and maximum whites and blacks from some cropped template domino tiles (from \texttt{boards+dominoes/07.jpg}).
+	\item After the classifier decided whether the patch is a domino tile or not, sometimes it encounters false-positives, like in the case of the patches in the middle of the board. In this case, they are be avoided when the classifier computes the number of the dots in the tile. This is done via the OpenCV implementation of the Hough Circle Transform, which uses some hardcoded \texttt{minRadius} and \texttt{maxRadius} parameters to determine only the small circles from dominoes and exclude false-positives.
+	\item When the classification is done, the positions and scores are calculated and stored in text files in an output specified in the script.
+\end{enumerate}
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[scale=0.125]{aligned_train/aligned_1_01.jpg}
+	\caption{Aligned Picture of Move One from Game One}
+\end{figure}
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[scale=0.2]{tiled.jpg}
+	\caption{Aligned Tiled Picture of Move 20 from Game One}
+\end{figure}
+
+\end{document}
