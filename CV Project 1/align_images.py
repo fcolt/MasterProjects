@@ -12,7 +12,7 @@ def get_keypoints_and_features(image) -> tuple:
     
     gray_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
-    sift = cv.SIFT_create()
+    sift = cv.SIFT_create(25000)
     
     keypoints, features = sift.detectAndCompute(gray_image, None)
         
