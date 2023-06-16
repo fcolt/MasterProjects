@@ -1,0 +1,110 @@
+\documentclass{article}
+\usepackage[a4paper, portrait, margin=1.1811in]{geometry}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\usepackage{etoolbox}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{amsfonts}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{xcolor} 
+\usepackage[colorlinks, citecolor=cyan]{hyperref}
+\usepackage{caption}
+\captionsetup[figure]{name=Figure}
+\graphicspath{ {./images/} }
+\usepackage{scrextend}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\newcounter{lemma}
+\newtheorem{lemma}{Lemma}
+\newcounter{theorem}
+\newtheorem{theorem}{Theorem}
+
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\renewcommand{\headrulewidth}{0pt}
+	\renewcommand{\familydefault}{\sfdefault}
+}
+
+%\pagestyle{plain}
+\makeatletter
+\patchcmd{\@maketitle}{\LARGE \@title}{\fontsize{16}{19.2}\selectfont\@title}{}{}
+\makeatother
+
+\usepackage{authblk}
+\renewcommand\Authfont{\fontsize{10}{10.8}\selectfont}
+\renewcommand\Affilfont{\fontsize{10}{10.8}\selectfont}
+\renewcommand*{\Authsep}{, }
+\renewcommand*{\Authand}{, }
+\renewcommand*{\Authands}{, }
+\setlength{\affilsep}{2em}  
+\newsavebox\affbox
+\author{\textbf{Olteanu Fabian Cristian}}
+\affil{FMI, AI Master, Year 1
+}
+
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsection{12pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsubsection{12pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+
+\titleformat{\section}{\normalfont\fontsize{10}{15}\bfseries}{\thesection.}{1em}{}
+\titleformat{\subsection}{\normalfont\fontsize{10}{15}\bfseries}{\thesubsection.}{1em}{}
+\titleformat{\subsubsection}{\normalfont\fontsize{10}{15}\bfseries}{\thesubsubsection.}{1em}{}
+
+\titleformat{\author}{\normalfont\fontsize{10}{15}\bfseries}{\thesection}{1em}{}
+
+\title{\textbf{\huge Advanced Machine Learning Assignment 2}}
+\date{}    
+
+\begin{document}
+
+\pagestyle{headings}	
+\newpage
+\setcounter{page}{1}
+\renewcommand{\thepage}{\arabic{page}}
+
+
+	
+\captionsetup[figure]{labelfont={bf},labelformat={default},labelsep=period,name={Figure }}	\captionsetup[table]{labelfont={bf},labelformat={default},labelsep=period,name={Table }}
+\setlength{\parskip}{0.5em}
+	
+\maketitle
+	
+\noindent\rule{15cm}{0.4pt}
+\renewcommand{\thesubsection}{\thesection.\alph{subsection}}
+
+\section{Exercise 1}
+We have the following hypothesis class:
+$$
+\mathcal{H} = \{ h_{a} : \mathbb{R} \rightarrow \{0,1\}\ | \ a > 0, a\in \mathbb{R}, \text{\ where \ } 
+h_{a}(x)= \mathbf{1}_{[-a,a]}(x) = \left\{
+\begin{array}{ll}
+      1, & x \in [-a,a]\\
+      0, & x \not\in [-a,a] \\
+\end{array}
+\right. 
+$$
+\subsection{}
+We can make the observation that $x\in[-a,a]$ is equivalent to $|x|\leq a, \forall a\in \mathbb{R}_{+}, x\in\mathbb{R}$. Based on this observation we can say that the hypothesis class is a threshold class.
+Thus, in order to compute its growth function, we can follow a very similar approach to the one illustrated in lecture 8 \cite{AML8} and conclude that $\tau_\mathcal{H}(m) = m+1$, where $C=\{c_1,c_2,...,c_m\}$ and $m=|C|$.
+
+\subsection{}
+Since $\mathcal{H}$ is a threshold hypothesis class, we know that $VCDim(\mathcal{H})=1$. Sauer's lemma states that $\tau_\mathcal{H}(m)\leq \displaystyle\sum_{i=0}^d{m \choose i}$, where $d=VCdim(\mathcal{H})$.
+
+In conclusion, $\tau_\mathcal{H}(m)\leq \displaystyle{m \choose 0} + \displaystyle{m \choose 1}= m+1$, so $\tau_\mathcal{H}(m)$ is equal to the general upper bound given by Sauer's lemma.
+
+\newpage
+
+%\bibliography{template} %-->reference list is on the template.bib file
+\begin{thebibliography}{1.7} 
+	\bibitem[1]{AML8} \color{cyan}Bogdan Alexe, Advanced machine Learning, Lecture 8, 2023 \color{black}
+	
+\end{thebibliography}
+
+\end{document}
