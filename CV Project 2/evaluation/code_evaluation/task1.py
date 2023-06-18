@@ -24,9 +24,9 @@ def checkResults(results_folder='submission/Task1/', gd_folder='train/Task1/grou
         else:
             bad_files.append(filenames[i])
 
-    print(len(results))
-    print(correct)
-    print(f'{len(bad_files)} bad predictions')
+    print(f'Total predictions: {len(results)}')
+    print(f'Correct predictions: {correct}')
+    print(f'Bad predictions: {len(bad_files)} ')
     print(f'Accuracy is {correct / len(results) * 100}%')
 
     return bad_files
