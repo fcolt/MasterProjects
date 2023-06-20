@@ -17,6 +17,7 @@ get_formatted_predictions('../train/Task1/', '../submission/Task1/')
 
 ```
 Run all blocks afterwards.
+
 3. For task2, open `task2.ipynb` and change `videos_path`, `out_path` and the YOLOv5s path in the last block accordingly, like below: 
 ```python
 
