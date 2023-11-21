@@ -4,9 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import org.apache.commons.cli.*;
+import org.apache.tika.exception.TikaException;
 
 public class Main {
-    public static void main(String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException, ParseException, TikaException {
         Options options = new Options();
 
         Option docDir = new Option("p", "docDir", true, "The path of the documents to be analyzed");
@@ -26,19 +27,14 @@ public class Main {
             formatter.printHelp("utility-name", options);
         }
 
-        Analyzer analyzer;
-        analyzer = new Analyzer(cmd.getOptionValue("docDir"), cmd.getOptionValue("indexDir"));
+        IndexSearcher indexSearcher = new IndexSearcher(cmd.getOptionValue("docDir"), cmd.getOptionValue("indexDir"));
 
         while (true) {
-            System.out.println("Ce termen cautam?");
+            System.out.println("Query: ");
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            String cautare = reader.readLine();
+            String query = reader.readLine();
 
-            if (cautare.length() > 1) {
-                analyzer.search(cautare.toLowerCase().trim());
-            } else {
-                System.out.println("Cel putin 2 caractere");
-            }
+            indexSearcher.search(query.toLowerCase().trim(), 10);
         }
     }
 }
