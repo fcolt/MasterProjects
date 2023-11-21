@@ -24,17 +24,15 @@ public class Searcher {
         Directory indexDirectory = FSDirectory.open(Paths.get(indexDirectoryPath));
         IndexReader reader = DirectoryReader.open(indexDirectory);
         indexSearcher = new IndexSearcher(reader);
-        queryParser = new QueryParser("contents",
-                new RomanianAnalyzer());
+        queryParser = new QueryParser("contents", new BetterRomanianAnalyzer());
     }
 
-    public TopDocs search( String searchQuery) throws IOException, ParseException {
+    public TopDocs search(String searchQuery, int noOfHits) throws IOException, ParseException {
         query = queryParser.parse(searchQuery);
-        return indexSearcher.search(query, 10); //10 cautari max
+        return indexSearcher.search(query, noOfHits);
     }
 
     public Document getDocument(ScoreDoc scoreDoc) throws IOException {
         return indexSearcher.doc(scoreDoc.doc);
     }
-
 }
