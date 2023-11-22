@@ -16,10 +16,10 @@ public class IndexSearcher {
     public IndexSearcher (String dataDir, String indexDir) throws IOException, TikaException {
         this.dataDir = dataDir;
         this.indexDir = indexDir;
-        createIndex();
+        createIndices();
     }
 
-    private void createIndex() throws IOException, TikaException {
+    private void createIndices() throws IOException, TikaException {
         FileUtils.cleanDirectory(new File(indexDir));
 
         DocumentIndexer indexer = new DocumentIndexer(indexDir);
