@@ -11,6 +11,7 @@ import org.apache.tika.exception.TikaException;
 public class IndexSearcher {
     private final String indexDir;
     private final String dataDir;
+    public int filesIndexed;
 
     public IndexSearcher (String dataDir, String indexDir) throws IOException, TikaException {
         this.dataDir = dataDir;
@@ -23,10 +24,10 @@ public class IndexSearcher {
 
         DocumentIndexer indexer = new DocumentIndexer(indexDir);
         long startTime = System.currentTimeMillis();
-        int numIndexed = indexer.createIndex(dataDir, new AcceptedFileTypes());
+        filesIndexed = indexer.createIndex(dataDir, new AcceptedFileTypes());
         long endTime = System.currentTimeMillis();
         indexer.close();
-        System.out.println(numIndexed + " files indexed in "
+        System.out.println(filesIndexed + " files indexed in "
                 + (endTime - startTime) * 0.001 + "s");
     }
 
@@ -36,7 +37,7 @@ public class IndexSearcher {
         TopDocs hits = searcher.search(searchQuery, noOfHits);
         long endTime = System.currentTimeMillis();
 
-        System.out.println(hits.totalHits + " document(s) found in " + (endTime - startTime) * 0.001 + "s");
+        System.out.println(hits.totalHits + " document(s) found in " + (endTime - startTime) * 0.001 + "s" + " for query: " + searchQuery);
         for (ScoreDoc scoreDoc : hits.scoreDocs) {
             Document doc = searcher.getDocument(scoreDoc);
             System.out.println("Filepath: " + doc.get("filepath"));
