@@ -56,3 +56,6 @@ build/
 **/Deep Learning Project 1/val_images
 **/Deep Learning Project 1/test_images
 **/__pycache__/** 
+
+**/Deep Learning Project 2/dataset
+**/Deep Learning Project 2/dataset_folds
